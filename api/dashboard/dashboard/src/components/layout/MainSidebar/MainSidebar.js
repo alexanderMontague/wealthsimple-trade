@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import { Col } from "shards-react";
@@ -7,53 +8,24 @@ import SidebarMainNavbar from "./SidebarMainNavbar";
 import SidebarSearch from "./SidebarSearch";
 import SidebarNavItems from "./SidebarNavItems";
 
-import { Store } from "../../../flux";
+const MainSidebar = props => {
+  const { menuVisible } = props;
 
-class MainSidebar extends React.Component {
-  constructor(props) {
-    super(props);
+  const classes = classNames(
+    "main-sidebar",
+    "px-0",
+    "col-12",
+    menuVisible && "open"
+  );
 
-    this.state = {
-      menuVisible: false,
-      sidebarNavItems: Store.getSidebarItems()
-    };
-
-    this.onChange = this.onChange.bind(this);
-  }
-
-  UNSAFE_componentWillMount() {
-    Store.addChangeListener(this.onChange);
-  }
-
-  UNSAFE_componentWillUnmount() {
-    Store.removeChangeListener(this.onChange);
-  }
-
-  onChange() {
-    this.setState({
-      ...this.state,
-      menuVisible: Store.getMenuState(),
-      sidebarNavItems: Store.getSidebarItems()
-    });
-  }
-
-  render() {
-    const classes = classNames(
-      "main-sidebar",
-      "px-0",
-      "col-12",
-      this.state.menuVisible && "open"
-    );
-
-    return (
-      <Col tag="aside" className={classes} lg={{ size: 2 }} md={{ size: 3 }}>
-        <SidebarMainNavbar hideLogoText={this.props.hideLogoText} />
-        <SidebarSearch />
-        <SidebarNavItems />
-      </Col>
-    );
-  }
-}
+  return (
+    <Col tag="aside" className={classes} lg={{ size: 2 }} md={{ size: 3 }}>
+      <SidebarMainNavbar hideLogoText={props.hideLogoText} />
+      <SidebarSearch />
+      <SidebarNavItems />
+    </Col>
+  );
+};
 
 MainSidebar.propTypes = {
   /**
@@ -66,4 +38,8 @@ MainSidebar.defaultProps = {
   hideLogoText: false
 };
 
-export default MainSidebar;
+const mapStateToProps = state => ({
+  menuVisible: state.userInterface.sidebarVisible
+});
+
+export default connect(mapStateToProps)(MainSidebar);
