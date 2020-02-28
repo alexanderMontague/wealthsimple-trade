@@ -1,15 +1,15 @@
 import React from "react";
+import {connect} from 'react-redux';
 import { Nav } from "shards-react";
 
 import SidebarNavItem from "./SidebarNavItem";
-import { Store } from "../../../flux";
 
 class SidebarNavItems extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      navItems: Store.getSidebarItems()
+      navItems: this.props.navItems
     };
 
     this.onChange = this.onChange.bind(this);
@@ -44,4 +44,8 @@ class SidebarNavItems extends React.Component {
   }
 }
 
-export default SidebarNavItems;
+const mapStateToProps = state => ({
+  navItems: state.userInterface.sidebarRoutes
+})
+
+export default connect(mapStateToProps)(SidebarNavItems);
