@@ -1,5 +1,4 @@
-export default function() {
-  return [
+export default [
     {
       title: "Holdings",
       to: "/holdings",
@@ -55,4 +54,3 @@ export default function() {
       to: "/errors"
     }
   ];
-}
