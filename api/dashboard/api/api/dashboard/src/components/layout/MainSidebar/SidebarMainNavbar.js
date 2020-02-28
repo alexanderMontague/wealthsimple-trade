@@ -1,22 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Navbar, NavbarBrand } from "shards-react";
+import { connect } from "react-redux";
 
-import { Dispatcher, Constants } from "../../../flux";
+import { Navbar, NavbarBrand } from "shards-react";
+import { interfaceActions } from "../../../redux/actions";
 
 import logo from "../../../images/shards-dashboards-logo.svg";
 
 class SidebarMainNavbar extends React.Component {
   constructor(props) {
     super(props);
-
-    this.handleToggleSidebar = this.handleToggleSidebar.bind(this);
-  }
-
-  handleToggleSidebar() {
-    Dispatcher.dispatch({
-      actionType: Constants.TOGGLE_SIDEBAR
-    });
   }
 
   render() {
@@ -50,7 +43,7 @@ class SidebarMainNavbar extends React.Component {
           {/* eslint-disable-next-line */}
           <a
             className="toggle-sidebar d-sm-inline d-md-none d-lg-none"
-            onClick={this.handleToggleSidebar}
+            onClick={this.props.toggleSidebar}
           >
             <i className="material-icons">&#xE5C4;</i>
           </a>
@@ -71,4 +64,8 @@ SidebarMainNavbar.defaultProps = {
   hideLogoText: false
 };
 
-export default SidebarMainNavbar;
+const mapDispatchToProps = {
+  toggleSidebar: interfaceActions.toggleSidebar
+};
+
+export default connect(null, mapDispatchToProps)(SidebarMainNavbar);
