@@ -1,2 +1,3 @@
-# wealthsimple-trade
+# Wealthsimple Trade Desktop Client
+
 WIP
