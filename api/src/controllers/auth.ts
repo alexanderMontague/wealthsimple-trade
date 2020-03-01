@@ -1,4 +1,4 @@
-const { createResponse } = require('../helpers');
+import { createResponse } from "../helpers";
 
 /*
  *   POST /api/v1/login
@@ -20,8 +20,8 @@ const { createResponse } = require('../helpers');
  *     }
  *   }
  */
-exports.loginUser = function (req, res, next) {
-  res.json(createResponse(200, 'Response!', null, false))
+export function login(req, res, next) {
+  res.json(createResponse(200, "Response!", null, false));
 
   // if (req.isAuthenticated()) {
   //   return res.json(createResponse(200, 'Already logged in!', null, true));
