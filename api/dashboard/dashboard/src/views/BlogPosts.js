@@ -14,6 +14,13 @@ import {
 
 import PageTitle from "../components/common/PageTitle";
 
+import oneBg from "../images/content-management/1.jpeg";
+import oneAv from "../images/avatars/1.jpg";
+import twoBg from "../images/content-management/2.jpeg";
+import twoAv from "../images/avatars/2.jpg";
+import threeBg from "../images/content-management/3.jpeg";
+import threeAv from "../images/avatars/3.jpg";
+
 class BlogPosts extends React.Component {
   constructor(props) {
     super(props);
@@ -22,33 +29,33 @@ class BlogPosts extends React.Component {
       // First list of posts.
       PostsListOne: [
         {
-          backgroundImage: require("../images/content-management/1.jpeg"),
+          backgroundImage: oneBg,
           category: "Business",
           categoryTheme: "dark",
           author: "Anna Kunis",
-          authorAvatar: require("../images/avatars/1.jpg"),
+          authorAvatar: oneAv,
           title: "Conduct at an replied removal an amongst",
           body:
             "However venture pursuit he am mr cordial. Forming musical am hearing studied be luckily. But in for determine what would see...",
           date: "28 February 2019"
         },
         {
-          backgroundImage: require("../images/content-management/2.jpeg"),
+          backgroundImage: twoBg,
           category: "Travel",
           categoryTheme: "info",
           author: "James Jamerson",
-          authorAvatar: require("../images/avatars/2.jpg"),
+          authorAvatar: twoAv,
           title: "Off tears are day blind smile alone had ready",
           body:
             "Is at purse tried jokes china ready decay an. Small its shy way had woody downs power. To denoting admitted speaking learning my...",
           date: "29 February 2019"
         },
         {
-          backgroundImage: require("../images/content-management/3.jpeg"),
+          backgroundImage: threeBg,
           category: "Technology",
           categoryTheme: "royal-blue",
           author: "Jimmy Jackson",
-          authorAvatar: require("../images/avatars/2.jpg"),
+          authorAvatar: threeAv,
           title: "Difficult in delivered extensive at direction",
           body:
             "Is at purse tried jokes china ready decay an. Small its shy way had woody downs power. To denoting admitted speaking learning my...",
@@ -186,7 +193,12 @@ class BlogPosts extends React.Component {
       <Container fluid className="main-content-container px-4">
         {/* Page Header */}
         <Row noGutters className="page-header py-4">
-          <PageTitle sm="4" title="Blog Posts" subtitle="Components" className="text-sm-left" />
+          <PageTitle
+            sm="4"
+            title="Blog Posts"
+            subtitle="Components"
+            className="text-sm-left"
+          />
         </Row>
 
         {/* First Row of Posts */}
