@@ -1,11 +1,9 @@
-import { combineReducers } from 'redux';
-// import authState from './authReducer';
-// import tradeState from './tradeReducer';
-import userInterface from './interface';
+import { combineReducers } from "redux";
+import auth from "./auth";
+import userInterface from "./interface";
 
 const rootReducer = combineReducers({
-  // tradeState,
-  // authState,
+  auth,
   userInterface
 });
 

@@ -44,7 +44,7 @@ export default class UserActions extends React.Component {
           <DropdownItem tag={Link} to="user-profile">
             <i className="material-icons">&#xE7FD;</i> Profile
           </DropdownItem>
-          <DropdownItem tag={Link} to="edit-user-profile">
+          {/* <DropdownItem tag={Link} to="edit-user-profile">
             <i className="material-icons">&#xE8B8;</i> Edit Profile
           </DropdownItem>
           <DropdownItem tag={Link} to="file-manager-list">
@@ -52,7 +52,7 @@ export default class UserActions extends React.Component {
           </DropdownItem>
           <DropdownItem tag={Link} to="transaction-history">
             <i className="material-icons">&#xE896;</i> Transactions
-          </DropdownItem>
+          </DropdownItem> */}
           <DropdownItem divider />
           <DropdownItem tag={Link} to="/" className="text-danger">
             <i className="material-icons text-danger">&#xE879;</i> Logout
