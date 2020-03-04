@@ -44,8 +44,8 @@ export async function login(req, res, next) {
   }
 
   const tokens = {
-    accessToken: loginResponse.headers["x-access-token"],
-    refreshToken: loginResponse.headers["x-refresh-token"]
+    access: loginResponse.headers["x-access-token"],
+    refresh: loginResponse.headers["x-refresh-token"]
   }
 
   res.json(
