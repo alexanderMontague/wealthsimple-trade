@@ -1,5 +1,4 @@
-const axios = require("axios");
-const moment = require("moment");
+import { Response } from "./types";
 
 // Decodes and Parses encoded body information
 export const decodeBody = bodyObject => {
@@ -14,11 +13,14 @@ export const decodeBody = bodyObject => {
  *    error: Boolean || null
  *  }
  */
-export const createResponse = (code, message, data, error) => {
-  return {
-    code,
-    message,
-    data,
-    error
-  };
-};
+export const createResponse = (
+  code: Number = 500,
+  message: String = "Something went wrong",
+  data: any,
+  error: Boolean
+): Response => ({
+  code,
+  message,
+  data,
+  error
+});

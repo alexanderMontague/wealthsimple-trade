@@ -1,4 +1,5 @@
 import { createResponse } from "../helpers";
+import { WST_login } from "../helpers/requests";
 
 /*
  *   POST /api/v1/login
@@ -20,38 +21,36 @@ import { createResponse } from "../helpers";
  *     }
  *   }
  */
-export function login(req, res, next) {
-  res.json(createResponse(200, "Response!", null, false));
+export async function login(req, res, next) {
+  const credentials = { ...req.body };
 
-  // if (req.isAuthenticated()) {
-  //   return res.json(createResponse(200, 'Already logged in!', null, true));
-  // }
+  if (!credentials.email) {
+    return res.json(
+      createResponse(200, "An email needs to be present", null, true)
+    );
+  }
 
-  // passport.authenticate('local', (err, user, info) => {
-  //   if (err) {
-  //     return res.json(createResponse(500, err.message, null, true));
-  //   }
-  //   if (!user) {
-  //     return res.json(createResponse(200, info.message, null, true));
-  //   }
-  //   req.logIn(user, async err => {
-  //     if (err) {
-  //       return res.json(createResponse(500, err.message, null, true));
-  //     }
+  if (!credentials.password) {
+    return res.json(
+      createResponse(200, "A password needs to be present", null, true)
+    );
+  }
 
-  //     const { password, ...userObject } = user._doc;
+  let loginResponse;
+  try {
+    loginResponse = await WST_login(credentials);
+  } catch (error) {
+    return res.json(createResponse(200, error.response?.data?.error, null, true));
+  }
 
-  //     if (userObject.portfolio) {
-  //       // Update portfolio current value, each coin current price, and 24 hr prices
-  //       // WILL mutate portfolio
-  //       userObject.portfolio = await updatePortfolio(userObject.portfolio, userObject.baseCurrency);
-  //     }
+  const tokens = {
+    accessToken: loginResponse.headers["x-access-token"],
+    refreshToken: loginResponse.headers["x-refresh-token"]
+  }
 
-  //     req.session.save(() => {
-  //       return res.json(createResponse(200, 'Successfully Logged In!', userObject, false));
-  //     });
-  //   });
-  // })(req, res, next);
+  res.json(
+    createResponse(200, "Successfully logged in!", {...loginResponse.data, tokens}, false)
+  );
 }
 
 /*
