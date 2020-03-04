@@ -1,5 +1,6 @@
 {
     "name": "@WST/api",
+    "description": "API for Wealthsimple Trade Desktop Client",
     "version": "1.0.0",
     "author": "Alex Montague",
     "license": "MIT",

@@ -1,9 +1,13 @@
 {
     "name": "@WST/dashboard",
+    "description": "React Dashboard for Wealthsimple Trade Desktop Client",
     "version": "1.0.0",
-    "private": true,
     "author": "Alex Montague",
-    "homepage": "./",
+    "license": "MIT",
+    "scripts": {
+        "start": "webpack-dev-server --mode=development",
+        "build": "webpack --mode=production"
+    },
     "dependencies": {
         "chart.js": "^2.7.3",
         "classnames": "^2.2.6",
@@ -42,9 +46,5 @@
         "webpack": "4.41.5",
         "webpack-cli": "^3.3.10",
         "webpack-dev-server": "3.10.1"
-    },
-    "scripts": {
-        "start": "webpack-dev-server --mode=development",
-        "build": "webpack --mode=production"
     }
 }
