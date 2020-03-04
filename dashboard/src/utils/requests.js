@@ -1,9 +1,9 @@
-import axios from "axios";
+import axios from 'axios'
 
-const IS_DEV = process.env.NODE_ENV === "development";
+const IS_DEV = process.env.NODE_ENV === 'development'
 const BASE_URL = IS_DEV
-  ? "http://localhost:3334/api/v1"
-  : "https://TBD.ca/api/v1";
+    ? 'http://localhost:3334/api/v1'
+    : 'https://TBD.ca/api/v1'
 
 /**
  *  Request Format:
@@ -22,4 +22,4 @@ const BASE_URL = IS_DEV
  *   }
  */
 export const loginUser = async credentials =>
-  (await axios.post(`${BASE_URL}/login`, credentials)).data;
+    (await axios.post(`${BASE_URL}/login`, credentials)).data

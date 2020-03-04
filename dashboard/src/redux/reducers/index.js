@@ -1,10 +1,10 @@
-import { combineReducers } from "redux";
-import auth from "./auth";
-import userInterface from "./interface";
+import { combineReducers } from 'redux'
+import auth from './auth'
+import userInterface from './interface'
 
 const rootReducer = combineReducers({
-  auth,
-  userInterface
-});
+    auth,
+    userInterface,
+})
 
-export default rootReducer;
+export default rootReducer

@@ -1,5 +1,5 @@
-import { createResponse } from "../helpers";
-import { WST_login } from "../helpers/requests";
+import { createResponse } from '../helpers'
+import { WST_login } from '../helpers/requests'
 
 /*
  *   POST /api/v1/login
@@ -22,35 +22,42 @@ import { WST_login } from "../helpers/requests";
  *   }
  */
 export async function login(req, res, next) {
-  const credentials = { ...req.body };
+    const credentials = { ...req.body }
 
-  if (!credentials.email) {
-    return res.json(
-      createResponse(200, "An email needs to be present", null, true)
-    );
-  }
+    if (!credentials.email) {
+        return res.json(
+            createResponse(200, 'An email needs to be present', null, true)
+        )
+    }
 
-  if (!credentials.password) {
-    return res.json(
-      createResponse(200, "A password needs to be present", null, true)
-    );
-  }
+    if (!credentials.password) {
+        return res.json(
+            createResponse(200, 'A password needs to be present', null, true)
+        )
+    }
 
-  let loginResponse;
-  try {
-    loginResponse = await WST_login(credentials);
-  } catch (error) {
-    return res.json(createResponse(200, error.response?.data?.error, null, true));
-  }
+    let loginResponse
+    try {
+        loginResponse = await WST_login(credentials)
+    } catch (error) {
+        return res.json(
+            createResponse(200, error.response?.data?.error, null, true)
+        )
+    }
 
-  const tokens = {
-    access: loginResponse.headers["x-access-token"],
-    refresh: loginResponse.headers["x-refresh-token"]
-  }
+    const tokens = {
+        access: loginResponse.headers['x-access-token'],
+        refresh: loginResponse.headers['x-refresh-token'],
+    }
 
-  res.json(
-    createResponse(200, "Successfully logged in!", {...loginResponse.data, tokens}, false)
-  );
+    res.json(
+        createResponse(
+            200,
+            'Successfully logged in!',
+            { ...loginResponse.data, tokens },
+            false
+        )
+    )
 }
 
 /*

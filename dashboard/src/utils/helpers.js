@@ -7,15 +7,15 @@
  *  }
  */
 export const createResponse = (
-  code = 500,
-  message = "Something went wrong",
-  data,
-  error
-) => {
-  return {
-    code,
-    message,
+    code = 500,
+    message = 'Something went wrong',
     data,
     error
-  };
-};
+) => {
+    return {
+        code,
+        message,
+        data,
+        error,
+    }
+}

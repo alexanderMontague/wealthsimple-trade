@@ -1,4 +1,4 @@
-const { createResponse } = require('../helpers');
+const { createResponse } = require('../helpers')
 
 /* GET /api/v1/public/seeReq
  *   RES: {
@@ -8,19 +8,19 @@ const { createResponse } = require('../helpers');
  *   }
  */
 const seeReq = (req, res) => {
-  const portfolio = req.user && req.user.portfolio;
+    const portfolio = req.user && req.user.portfolio
 
-  const infoStuff = {
-    isAuthenticated: req.isAuthenticated(),
-    session: req.session,
-    sessionID: req.sessionID,
-    portfolio,
-  };
+    const infoStuff = {
+        isAuthenticated: req.isAuthenticated(),
+        session: req.session,
+        sessionID: req.sessionID,
+        portfolio,
+    }
 
-  res.json(createResponse(200, null, { ...infoStuff }, false));
-  return;
-};
+    res.json(createResponse(200, null, { ...infoStuff }, false))
+    return
+}
 
 module.exports = {
-  seeReq,
-};
+    seeReq,
+}

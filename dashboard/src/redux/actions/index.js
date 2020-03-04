@@ -1,4 +1,4 @@
-import * as interfaceActions from "./interface";
-import * as authActions from "./auth";
+import * as interfaceActions from './interface'
+import * as authActions from './auth'
 
-export { interfaceActions, authActions };
+export { interfaceActions, authActions }

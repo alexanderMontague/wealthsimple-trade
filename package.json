@@ -1,8 +1,12 @@
 {
-  "name": "wealthsimple-desktop-client",
-  "author": "Alex Montague",
-  "private": true,
-  "devDependencies": {
-    "lerna": "^3.20.2"
-  }
+    "name": "wealthsimple-desktop-client",
+    "author": "Alex Montague",
+    "private": true,
+    "scripts": {
+        "prettier": "prettier --write \"**/*.{ts,js,json}\""
+    },
+    "devDependencies": {
+        "lerna": "^3.20.2",
+        "prettier": "^1.19.1"
+    }
 }

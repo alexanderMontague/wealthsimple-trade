@@ -1,7 +1,4 @@
 {
-  "packages": [
-    "dashboard/*",
-    "api/*"
-  ],
-  "version": "1.0.0"
+    "packages": ["dashboard/*", "api/*"],
+    "version": "1.0.0"
 }
