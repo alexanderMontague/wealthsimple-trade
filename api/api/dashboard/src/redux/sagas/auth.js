@@ -10,10 +10,10 @@ function* attemptLoginUser({ payload }) {
 
   try {
     loginResponse = yield loginUser(payload);
-  } catch (err) {
+  } catch (error) {
     loginResponse = createResponse(
-      err.response?.status || 500,
-      `Somthing went wrong: ${err.message}`,
+      error.response?.status || 500,
+      error.message || "Something went wrong...",
       null,
       true
     );
