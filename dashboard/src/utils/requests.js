@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const IS_DEV = process.env.mode === "development";
+const IS_DEV = process.env.NODE_ENV === "development";
 const BASE_URL = IS_DEV
   ? "http://localhost:3334/api/v1"
   : "https://TBD.ca/api/v1";

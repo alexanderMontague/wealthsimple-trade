@@ -2,10 +2,22 @@ import { put, takeLatest } from "redux-saga/effects";
 import { LOGIN_USER, LOGOUT_USER } from "../constants";
 import { authActions } from "../actions";
 import { loginUser } from "../../utils/requests";
+import { createResponse } from "../../utils/helpers";
 
 // LOGIN
 function* attemptLoginUser({ payload }) {
-  const loginResponse = yield loginUser(payload);
+  let loginResponse;
+
+  try {
+    loginResponse = yield loginUser(payload);
+  } catch (err) {
+    loginResponse = createResponse(
+      err.response?.status || 500,
+      `Somthing went wrong: ${err.message}`,
+      null,
+      true
+    );
+  }
 
   if (loginResponse.error) {
     return yield put(authActions.loginFailure(loginResponse));
@@ -25,7 +37,7 @@ function* attemptLogoutUser() {
   yield put(authActions.logoutSuccess(logoutResponse));
 }
 
-export function* authSaga() {
+export default function* authSaga() {
   yield takeLatest(LOGIN_USER, attemptLoginUser);
   yield takeLatest(LOGOUT_USER, attemptLogoutUser);
 }
