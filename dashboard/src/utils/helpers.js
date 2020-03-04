@@ -6,7 +6,12 @@
  *    error: Boolean || null
  *  }
  */
-export const createResponse = (code, message, data, error) => {
+export const createResponse = (
+  code = 500,
+  message = "Something went wrong",
+  data,
+  error
+) => {
   return {
     code,
     message,
