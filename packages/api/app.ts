@@ -40,7 +40,7 @@ axiosLogger({
 /**
  * Load environment variables from .env file
  */
-dotenv.load({ path: '.env.keys' })
+dotenv.load({ path: '.env' })
 
 /**
  * Get Routes

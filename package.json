@@ -3,7 +3,7 @@
     "author": "Alex Montague",
     "private": true,
     "scripts": {
-        "start": "lerna run start",
+        "start": "lerna run start --stream",
         "bootstrap": "lerna bootstrap --hoist",
         "clean": "lerna clean",
         "prettier": "prettier --write \"**/*.{ts,js,json}\""
