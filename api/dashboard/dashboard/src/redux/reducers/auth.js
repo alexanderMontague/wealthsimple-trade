@@ -9,6 +9,7 @@ import {
 
 const initialState = {
   user: {},
+  tokens: {},
 
   isLoginLoading: false,
   isLoginError: false,
@@ -27,7 +28,8 @@ const authReducer = (prevState = initialState, { type, payload }) => {
     case LOGIN_USER_SUCCESS:
       return {
         ...prevState,
-        user: payload.user,
+        user: payload.data,
+        tokens: payload.data?.tokens,
         isLoginLoading: false,
         isLoginError: false,
         loginMessage: payload.message
