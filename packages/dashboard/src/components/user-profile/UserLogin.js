@@ -14,12 +14,14 @@ import {
     Button,
     FormFeedback,
 } from 'shards-react'
+import { SyncLoader } from 'react-spinners'
 
 const UserAccountDetails = ({
     title,
     loginUser,
     isLoginError,
     loginMessage,
+    isLoginLoading,
 }) => {
     const [userInfo, setUserInfo] = useState({ email: '', password: '' })
     const [validation, setValidation] = useState({
@@ -64,12 +66,12 @@ const UserAccountDetails = ({
         })
     }
 
-    const logoutHandler = () => {
+    const loginHandler = event => {
+        event.preventDefault()
+
         if (isInvalid()) return
 
         loginUser(userInfo)
-
-        console.log('hey there how are ya', userInfo)
     }
 
     return (
@@ -79,10 +81,12 @@ const UserAccountDetails = ({
             </CardHeader>
             <Row className="my-1 text-center">
                 <Col md="12" className="form-group">
-                    <h6>{loginMessage}</h6>
+                    <h6 style={{ color: isLoginError ? 'red' : '#3d5170' }}>
+                        {loginMessage}
+                    </h6>
                 </Col>
             </Row>
-            <Form className="p-3 h-100">
+            <Form className="p-3 h-100" onSubmit={loginHandler}>
                 <Row className="my-4">
                     {/* Email */}
                     <Col md="12" className="form-group">
@@ -131,14 +135,18 @@ const UserAccountDetails = ({
                     </Col>
                 </Row>
 
-                <Button
-                    theme="accent"
-                    className="text-center rounded p-3 w-25 my-4"
-                    size="md"
-                    onClick={logoutHandler}
-                >
-                    Login
-                </Button>
+                {isLoginLoading ? (
+                    <SyncLoader size={20} color={'#007bff'} />
+                ) : (
+                    <Button
+                        theme="accent"
+                        className="text-center rounded p-3 w-25 my-4"
+                        size="md"
+                        type="submit"
+                    >
+                        Login
+                    </Button>
+                )}
             </Form>
         </Card>
     )
@@ -154,6 +162,7 @@ UserAccountDetails.defaultProps = {
 
 const mapStateToProps = state => ({
     isLoginError: state.auth.isLoginError,
+    isLoginLoading: state.auth.isLoginLoading,
     loginMessage: state.auth.loginMessage,
 })
 

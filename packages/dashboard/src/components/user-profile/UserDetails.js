@@ -3,62 +3,166 @@ import PropTypes from 'prop-types'
 import {
     Card,
     CardHeader,
-    Button,
     ListGroup,
     ListGroupItem,
-    Progress,
+    Row,
+    Col,
+    Form,
+    FormGroup,
+    FormInput,
+    FormSelect,
+    FormTextarea,
+    Button,
 } from 'shards-react'
 
-const UserDetails = ({ userInfo }) => (
-    <Card small className="mb-4 pt-3 h-100">
-        <CardHeader className="border-bottom text-center">
-            <h4 className="mb-0">{userInfo.title}</h4>
-            <span className="text-muted d-block mb-2">{userInfo.subTitle}</span>
-        </CardHeader>
-        <ListGroup flush>
-            <ListGroupItem className="p-4">
-                <strong className="text-muted d-block mb-2">
-                    {userInfo.preconditions}
-                </strong>
-                <span>{userInfo.preconditionsValue}</span>
-            </ListGroupItem>
-            <ListGroupItem className="p-4">
-                <strong className="text-muted d-block mb-2">
-                    {userInfo.whatThisDoes}
-                </strong>
-                <span>{userInfo.whatThisDoesValue}</span>
-            </ListGroupItem>
-            <ListGroupItem className="p-4">
-                <strong className="text-muted d-block mb-2">
-                    {userInfo.auth}
-                </strong>
-                <span>{userInfo.authValue}</span>
-            </ListGroupItem>
-        </ListGroup>
-    </Card>
-)
+const UserDetails = ({ title }) => {
+    const logoutHandler = () => {
+        console.log('hey there how are ya')
+    }
+    return (
+        <Card small className="mb-4">
+            <CardHeader className="border-bottom">
+                <h6 className="m-0">{title}</h6>
+            </CardHeader>
+            <ListGroup flush>
+                <ListGroupItem className="p-3">
+                    <Row>
+                        <Col>
+                            <Form>
+                                <Row form>
+                                    {/* First Name */}
+                                    <Col md="6" className="form-group">
+                                        <label htmlFor="feFirstName">
+                                            First Name
+                                        </label>
+                                        <FormInput
+                                            id="feFirstName"
+                                            placeholder="First Name"
+                                            value="Sierra"
+                                            disabled
+                                        />
+                                    </Col>
+                                    {/* Last Name */}
+                                    <Col md="6" className="form-group">
+                                        <label htmlFor="feLastName">
+                                            Last Name
+                                        </label>
+                                        <FormInput
+                                            id="feLastName"
+                                            placeholder="Last Name"
+                                            value="Brooks"
+                                            disabled
+                                        />
+                                    </Col>
+                                </Row>
+                                <Row form>
+                                    {/* Email */}
+                                    <Col md="6" className="form-group">
+                                        <label htmlFor="feEmail">Email</label>
+                                        <FormInput
+                                            type="email"
+                                            id="feEmail"
+                                            placeholder="Email Address"
+                                            value="sierra@example.com"
+                                            autoComplete="email"
+                                            disabled
+                                        />
+                                    </Col>
+                                    {/* Password */}
+                                    <Col md="6" className="form-group">
+                                        <label htmlFor="fePassword">
+                                            Password
+                                        </label>
+                                        <FormInput
+                                            type="password"
+                                            id="fePassword"
+                                            placeholder="Password"
+                                            value="EX@MPL#P@$$w0RD"
+                                            autoComplete="current-password"
+                                            disabled
+                                        />
+                                    </Col>
+                                </Row>
+                                <FormGroup>
+                                    <label htmlFor="feAddress">Address</label>
+                                    <FormInput
+                                        id="feAddress"
+                                        placeholder="Address"
+                                        value="1234 Main St."
+                                        disabled
+                                    />
+                                </FormGroup>
+                                <Row form>
+                                    {/* City */}
+                                    <Col md="6" className="form-group">
+                                        <label htmlFor="feCity">City</label>
+                                        <FormInput
+                                            id="feCity"
+                                            placeholder="City"
+                                            disabled
+                                        />
+                                    </Col>
+                                    {/* State */}
+                                    <Col md="4" className="form-group">
+                                        <label htmlFor="feInputState">
+                                            Province
+                                        </label>
+                                        <FormSelect id="feInputState" disabled>
+                                            <option>Choose...</option>
+                                            <option>...</option>
+                                        </FormSelect>
+                                    </Col>
+                                    {/* Zip Code */}
+                                    <Col md="2" className="form-group">
+                                        <label htmlFor="feZipCode">
+                                            Postal Code
+                                        </label>
+                                        <FormInput
+                                            id="feZipCode"
+                                            placeholder="Zip"
+                                            disabled
+                                        />
+                                    </Col>
+                                </Row>
+                                <Row form>
+                                    {/* Description */}
+                                    <Col md="12" className="form-group">
+                                        <label htmlFor="feDescription">
+                                            Description
+                                        </label>
+                                        <FormTextarea
+                                            id="feDescription"
+                                            rows="5"
+                                            disabled
+                                        />
+                                    </Col>
+                                </Row>
+                                <Button
+                                    theme="accent"
+                                    className="bg-danger text-center rounded p-3"
+                                    size="md"
+                                    onClick={logoutHandler}
+                                >
+                                    Logout
+                                </Button>
+                            </Form>
+                        </Col>
+                    </Row>
+                </ListGroupItem>
+            </ListGroup>
+        </Card>
+    )
+}
 
 UserDetails.propTypes = {
     /**
-     * The user details object.
+     * The component's title.
      */
-    userDetails: PropTypes.object,
+    title: PropTypes.string,
 }
 
 UserDetails.defaultProps = {
-    userInfo: {
-        title: 'How this Works',
-        subTitle: 'Wealthsimple Trade Desktop Client',
-        preconditions: 'Preconditions',
-        preconditionsValue:
-            'Make sure you have signed up for a Wealthsimple Trade Account on your mobile device through the app! We are in no way affiliated with Wealthsimple and cannot create accounts for you. Once you have an account you can utilize this desktop app.',
-        whatThisDoes: 'About',
-        whatThisDoesValue:
-            "This is a desktop client for viewing and managing your Wealthsimple Trade Account! If you don't love viewing things (especially investments) on your phone, use this instead. Again, we are not Wealthsimple. This is unaffiliated. We ONLY store your email if you wish to set up alerts. Feel free to check out the source at <GITHUB>.",
-        auth: 'Logging In',
-        authValue:
-            'There is no registration here. Log in with the same Wealthsimple Trade Email and Password you use for your mobile application. We utilize your existing account and store nothing unless you want us to. Enjoy the tool!',
-    },
+    title: 'Account Details',
 }
 
 export default UserDetails

@@ -10,6 +10,7 @@ import {
 const initialState = {
     user: {},
     tokens: {},
+    isLoggedIn: false,
 
     isLoginLoading: false,
     isLoginError: false,
@@ -33,6 +34,7 @@ const authReducer = (prevState = initialState, { type, payload }) => {
                 isLoginLoading: false,
                 isLoginError: false,
                 loginMessage: payload.message,
+                isLoggedIn: true,
             }
         case LOGIN_USER_FAIL:
             return {
@@ -40,6 +42,7 @@ const authReducer = (prevState = initialState, { type, payload }) => {
                 isLoginLoading: false,
                 isLoginError: true,
                 loginMessage: payload.message,
+                isLoggedIn: false,
             }
 
         // LOGOUT
@@ -52,6 +55,7 @@ const authReducer = (prevState = initialState, { type, payload }) => {
                 isLogoutLoading: false,
                 isLogoutError: false,
                 logoutMessage: payload.message,
+                isLoggedIn: false,
             }
         case LOGOUT_USER_FAIL:
             return {

@@ -1,13 +1,14 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { Container, Row, Col } from 'shards-react'
 
 import PageTitle from '../components/common/PageTitle'
+import InfoSidebar from '../components/user-profile/InfoSidebar'
 import UserDetails from '../components/user-profile/UserDetails'
-import UserAccountDetails from '../components/user-profile/UserAccountDetails'
 import UserLogin from '../components/user-profile/UserLogin'
 
-const UserProfileLite = () => {
-    const isLoggedIn = false
+const UserProfileLite = props => {
+    const { isLoggedIn, user } = props
 
     return (
         <Container fluid className="main-content-container px-4">
@@ -26,14 +27,19 @@ const UserProfileLite = () => {
                 }}
             >
                 <Col lg="6">
-                    <UserDetails />
+                    <InfoSidebar />
                 </Col>
                 <Col lg="6">
-                    {isLoggedIn ? <UserAccountDetails /> : <UserLogin />}
+                    {isLoggedIn ? <UserDetails user={user} /> : <UserLogin />}
                 </Col>
             </Row>
         </Container>
     )
 }
 
-export default UserProfileLite
+const mapStateToProps = state => ({
+    user: state.auth.user,
+    isLoggedIn: state.auth.isLoggedIn,
+})
+
+export default connect(mapStateToProps)(UserProfileLite)
