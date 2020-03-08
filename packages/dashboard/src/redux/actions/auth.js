@@ -5,7 +5,20 @@ import {
     LOGOUT_USER,
     LOGOUT_USER_SUCCESS,
     LOGOUT_USER_FAIL,
+    GET_STATUS,
+    GET_STATUS_RESPONSE,
 } from '../constants'
+
+// Status
+export const getStatus = (data = null) => ({
+    type: GET_STATUS,
+    payload: data,
+})
+
+export const statusResponse = data => ({
+    type: GET_STATUS_RESPONSE,
+    payload: data,
+})
 
 // Auth Actions
 

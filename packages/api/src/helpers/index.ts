@@ -24,3 +24,6 @@ export const createResponse = (
     data,
     error,
 })
+
+// Get an error message from requests
+export const getError = error => error.response?.data?.error || error.message

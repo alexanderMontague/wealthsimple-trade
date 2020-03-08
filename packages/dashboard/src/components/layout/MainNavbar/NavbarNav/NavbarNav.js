@@ -11,7 +11,7 @@ const NavBar = props => {
     return (
         <Nav navbar className="border-left flex-row">
             {/* <Notifications /> */}
-            {isLoggedIn && <UserActions user={user} />}
+            {isLoggedIn && <UserActions user={user} isLoggedIn={isLoggedIn} />}
         </Nav>
     )
 }

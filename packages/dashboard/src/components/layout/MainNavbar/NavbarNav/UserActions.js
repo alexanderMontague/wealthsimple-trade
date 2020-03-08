@@ -32,6 +32,8 @@ export default class UserActions extends React.Component {
     render() {
         const { user, isLoggedIn } = this.props
 
+        console.log('logged in', isLoggedIn)
+
         return (
             <NavItem tag={Dropdown} caret toggle={this.toggleUserActions}>
                 <DropdownToggle

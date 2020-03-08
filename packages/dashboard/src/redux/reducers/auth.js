@@ -5,12 +5,16 @@ import {
     LOGOUT_USER,
     LOGOUT_USER_SUCCESS,
     LOGOUT_USER_FAIL,
+    GET_STATUS,
+    GET_STATUS_RESPONSE,
 } from '../constants'
 
 const initialState = {
     user: {},
     tokens: {},
     isLoggedIn: false,
+
+    isStatusLoading: false,
 
     isLoginLoading: false,
     isLoginError: false,
@@ -23,6 +27,33 @@ const initialState = {
 
 const authReducer = (prevState = initialState, { type, payload }) => {
     switch (type) {
+        // STATUS
+        case GET_STATUS:
+            return { ...prevState, isStatusLoading: true }
+        case GET_STATUS_RESPONSE:
+            // if the status check was successful and tokens are valid, update auth state
+            if (!payload.error) {
+                return {
+                    ...prevState,
+                    user: payload.data,
+                    tokens: window.location.tokens,
+                    isStatusLoading: false,
+                    loginMessage: payload.message,
+                    isLoggedIn: true,
+                }
+            }
+            // if the tokens are invalid, logout user
+            else {
+                return {
+                    ...prevState,
+                    user: null,
+                    tokens: {},
+                    isStatusLoading: false,
+                    isLogoutError: false,
+                    isLoggedIn: false,
+                }
+            }
+
         // LOGIN
         case LOGIN_USER:
             return { ...prevState, isLoginLoading: true }

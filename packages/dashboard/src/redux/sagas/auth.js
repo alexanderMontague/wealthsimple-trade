@@ -1,8 +1,30 @@
 import { put, takeLatest } from 'redux-saga/effects'
-import { LOGIN_USER, LOGOUT_USER } from '../constants'
+import { LOGIN_USER, LOGOUT_USER, GET_STATUS } from '../constants'
 import { authActions } from '../actions'
-import { loginUser } from '../../utils/requests'
+import { loginUser, getStatus } from '../../utils/requests'
 import { createResponse } from '../../utils/helpers'
+
+// STATUS
+function* getUserStatus({ payload }) {
+    let statusResponse
+
+    try {
+        // pass token object as string in Auth header
+        statusResponse = yield getStatus(JSON.stringify(payload))
+    } catch (error) {
+        // if we have an error, invalidate tokens
+        delete window.localStorage.tokens
+
+        statusResponse = createResponse(
+            error.response?.status,
+            error.message,
+            null,
+            true
+        )
+    }
+
+    return yield put(authActions.statusResponse(statusResponse))
+}
 
 // LOGIN
 function* attemptLoginUser({ payload }) {
@@ -12,8 +34,8 @@ function* attemptLoginUser({ payload }) {
         loginResponse = yield loginUser(payload)
     } catch (error) {
         loginResponse = createResponse(
-            error.response?.status || 500,
-            error.message || 'Something went wrong...',
+            error.response?.status,
+            error.message,
             null,
             true
         )
@@ -23,6 +45,8 @@ function* attemptLoginUser({ payload }) {
         return yield put(authActions.loginFailure(loginResponse))
     }
 
+    // if login is successful, update tokens and dispatch success
+    window.localStorage.tokens = JSON.stringify(loginResponse.data.tokens)
     yield put(authActions.loginSuccess(loginResponse))
 }
 
@@ -40,4 +64,5 @@ function* attemptLogoutUser() {
 export default function* authSaga() {
     yield takeLatest(LOGIN_USER, attemptLoginUser)
     yield takeLatest(LOGOUT_USER, attemptLogoutUser)
+    yield takeLatest(GET_STATUS, getUserStatus)
 }

@@ -89,7 +89,7 @@ app.use(
     })
 )
 app.use(flash())
-app.use(cors(corsOptions))
+// app.use(cors(corsOptions))
 app.disable('x-powered-by')
 
 app.use((req, res, next) => {
