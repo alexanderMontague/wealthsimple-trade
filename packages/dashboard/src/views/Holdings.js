@@ -23,7 +23,7 @@ import TopReferrals from '../components/common/TopReferrals'
 const Holdings = ({ smallStats }) => {
   const [dropdownState, setDropdownState] = useState({
     isOpen: false,
-    selected: '',
+    selected: null,
   })
 
   const handleDropdownClick = event =>
@@ -39,7 +39,7 @@ const Holdings = ({ smallStats }) => {
       <Row noGutters className="page-header py-4">
         <Col lg="6" md="6" sm="6">
           <PageTitle
-            title="Account Overview"
+            title={'Account Overview'}
             subtitle="Holdings"
             className="text-md-left mb-3 w-100"
             lg="6"
@@ -47,15 +47,22 @@ const Holdings = ({ smallStats }) => {
             sm="6"
           />
         </Col>
-        <Col lg="6" md="6" sm="6">
-          <InputGroup className="d-flex justify-content-center align-items-center h-100">
+        <Col lg="6" md="6" sm="6" classNa>
+          <InputGroup className="d-flex justify-content-end align-items-center h-100 mt-2">
             <Dropdown
               id="toggle"
               open={dropdownState.isOpen}
               toggle={handleDropdownClick}
+              className="h-100"
             >
-              <DropdownToggle caret>Account Type</DropdownToggle>
-              <DropdownMenu small right>
+              <DropdownToggle
+                caret
+                className="h-100"
+                style={{ width: '150px', fontSize: '15px' }}
+              >
+                {dropdownState.selected || ' Account Type'}
+              </DropdownToggle>
+              <DropdownMenu medium right>
                 <DropdownItem
                   onClick={handleDropdownClick}
                   id="tfsa"
@@ -83,7 +90,7 @@ const Holdings = ({ smallStats }) => {
         </Col>
       </Row>
 
-      {/* Small Stats Blocks */}
+      {/* Portfolio Quick Look */}
       <Row>
         {smallStats.map((stats, idx) => (
           <Col className="col-lg mb-4" key={idx} {...stats.attrs}>
@@ -103,16 +110,17 @@ const Holdings = ({ smallStats }) => {
       </Row>
 
       <Row>
-        {/* Users Overview */}
-        <Col lg="12" md="12" sm="12" className="mb-4">
+        {/* Account Overview */}
+        <Col lg="9" md="12" sm="12" className="mb-4">
           <AccountOverview />
         </Col>
-
         {/* Users by Device */}
-        <Col lg="4" md="6" sm="12" className="mb-4">
+        <Col lg="3" md="12" sm="12" className="mb-4">
           <UsersByDevice />
         </Col>
+      </Row>
 
+      <Row>
         {/* New Draft */}
         <Col lg="4" md="6" sm="12" className="mb-4">
           <NewDraft />
@@ -142,8 +150,8 @@ Holdings.propTypes = {
 Holdings.defaultProps = {
   smallStats: [
     {
-      label: 'Posts',
-      value: '2,390',
+      label: 'Balance',
+      value: '$ 2,390',
       percentage: '4.7%',
       increase: true,
       chartLabels: [null, null, null, null, null, null, null],
@@ -160,8 +168,8 @@ Holdings.defaultProps = {
       ],
     },
     {
-      label: 'Pages',
-      value: '182',
+      label: 'Day Gain',
+      value: '$ 182',
       percentage: '12.4',
       increase: true,
       chartLabels: [null, null, null, null, null, null, null],
@@ -178,8 +186,8 @@ Holdings.defaultProps = {
       ],
     },
     {
-      label: 'Comments',
-      value: '8,147',
+      label: 'Total Gain',
+      value: '$ 8,147',
       percentage: '3.8%',
       increase: false,
       decrease: true,
@@ -193,44 +201,6 @@ Holdings.defaultProps = {
           backgroundColor: 'rgba(255,180,0,0.1)',
           borderColor: 'rgb(255,180,0)',
           data: [2, 3, 3, 3, 4, 3, 3],
-        },
-      ],
-    },
-    {
-      label: 'New Customers',
-      value: '29',
-      percentage: '2.71%',
-      increase: false,
-      decrease: true,
-      chartLabels: [null, null, null, null, null, null, null],
-      attrs: { md: '4', sm: '6' },
-      datasets: [
-        {
-          label: 'Today',
-          fill: 'start',
-          borderWidth: 1.5,
-          backgroundColor: 'rgba(255,65,105,0.1)',
-          borderColor: 'rgb(255,65,105)',
-          data: [1, 7, 1, 3, 1, 4, 8],
-        },
-      ],
-    },
-    {
-      label: 'Subscribers',
-      value: '17,281',
-      percentage: '2.4%',
-      increase: false,
-      decrease: true,
-      chartLabels: [null, null, null, null, null, null, null],
-      attrs: { md: '4', sm: '6' },
-      datasets: [
-        {
-          label: 'Today',
-          fill: 'start',
-          borderWidth: 1.5,
-          backgroundColor: 'rgb(0,123,255,0.1)',
-          borderColor: 'rgb(0,123,255)',
-          data: [3, 2, 3, 2, 4, 5, 4],
         },
       ],
     },
