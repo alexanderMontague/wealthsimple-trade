@@ -21,7 +21,7 @@ const MainNavbar = ({ layout, stickyTop }) => {
                     type="light"
                     className="align-items-stretch flex-md-nowrap p-0 justify-content-end"
                 >
-                    {/* <NavbarSearch /> */}
+                    <NavbarSearch />
                     <NavbarNav />
                     <NavbarToggle />
                 </Navbar>

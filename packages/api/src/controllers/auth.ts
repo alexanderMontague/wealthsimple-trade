@@ -34,8 +34,6 @@ export async function getStatus(req, res, next) {
     let statusResponse
     const tokens = JSON.parse(rawTokens)
 
-    console.log('tokens', tokens)
-
     try {
         statusResponse = await WST_status(tokens)
     } catch (error) {

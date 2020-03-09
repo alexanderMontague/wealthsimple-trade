@@ -5,6 +5,7 @@ import { Redirect } from 'react-router-dom'
 import { DefaultLayout } from '../layouts'
 
 // Route Views
+import Holdings from '../views/Holdings'
 import BlogOverview from '../views/BlogOverview'
 import UserProfile from '../views/UserProfile'
 import AddNewPost from '../views/AddNewPost'
@@ -23,7 +24,7 @@ export default [
     {
         path: '/holdings',
         layout: DefaultLayout,
-        component: BlogOverview,
+        component: Holdings,
         exact: true,
     },
     {
