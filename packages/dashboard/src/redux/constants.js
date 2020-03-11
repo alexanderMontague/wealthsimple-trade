@@ -13,3 +13,6 @@ export const LOGIN_USER_FAIL = 'LOGIN_USER_FAIL'
 export const LOGOUT_USER = 'LOGOUT_USER'
 export const LOGOUT_USER_SUCCESS = 'LOGOUT_USER_SUCCESS'
 export const LOGOUT_USER_FAIL = 'LOGOUT_USER_FAIL'
+
+// Portfolio
+export const SELECT_ACCOUNT = 'SELECT_ACCOUNT'

@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
+
+import { tradeActions } from '../redux/actions'
+
 import {
   Container,
   Row,
@@ -20,19 +24,24 @@ import NewDraft from '../components/blog/NewDraft'
 import Discussions from '../components/blog/Discussions'
 import TopReferrals from '../components/common/TopReferrals'
 
-const Holdings = ({ smallStats }) => {
+const Holdings = ({ smallStats, selectAccount }) => {
   const [dropdownState, setDropdownState] = useState({
     isOpen: false,
     selected: null,
   })
 
-  const handleDropdownClick = event =>
-    !event.target.id
-      ? setDropdownState({
-          ...dropdownState,
-          isOpen: !dropdownState.isOpen,
-        })
-      : setDropdownState({ isOpen: false, selected: event.target.id })
+  const handleDropdownClick = ({ target }) => {
+    // if drop down opened / closed with no value selected
+    if (!target.id) {
+      return setDropdownState({
+        ...dropdownState,
+        isOpen: !dropdownState.isOpen,
+      })
+    }
+
+    setDropdownState({ isOpen: false, selected: target.id })
+    selectAccount(target.id)
+  }
 
   return (
     <Container fluid className="main-content-container px-4">
@@ -42,12 +51,13 @@ const Holdings = ({ smallStats }) => {
             title={'Account Overview'}
             subtitle="Holdings"
             className="text-md-left mb-3 w-100"
+            style={{ minWidth: 300 }}
             lg="6"
             md="6"
             sm="6"
           />
         </Col>
-        <Col lg="6" md="6" sm="6" classNa>
+        <Col lg="6" md="6" sm="12">
           <InputGroup className="d-flex justify-content-end align-items-center h-100 mt-2">
             <Dropdown
               id="toggle"
@@ -62,9 +72,8 @@ const Holdings = ({ smallStats }) => {
               >
                 {dropdownState.selected || ' Account Type'}
               </DropdownToggle>
-              <DropdownMenu medium right>
+              <DropdownMenu right>
                 <DropdownItem
-                  onClick={handleDropdownClick}
                   id="tfsa"
                   active={dropdownState.selected === 'tfsa'}
                 >
@@ -72,14 +81,12 @@ const Holdings = ({ smallStats }) => {
                 </DropdownItem>
                 <DropdownItem
                   id="rrsp"
-                  onClick={handleDropdownClick}
                   active={dropdownState.selected === 'rrsp'}
                 >
                   RRSP
                 </DropdownItem>
                 <DropdownItem
                   id="test"
-                  onClick={handleDropdownClick}
                   active={dropdownState.selected === 'test'}
                 >
                   Something else here
@@ -207,4 +214,8 @@ Holdings.defaultProps = {
   ],
 }
 
-export default Holdings
+const mapDispatchToProps = {
+  selectAccount: tradeActions.selectAccount,
+}
+
+export default connect(null, mapDispatchToProps)(Holdings)

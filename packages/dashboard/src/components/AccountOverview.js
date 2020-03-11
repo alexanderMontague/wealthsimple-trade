@@ -1,6 +1,15 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import { Row, Col, Card, CardHeader, CardBody, Button } from 'shards-react'
+import {
+  Row,
+  Col,
+  Card,
+  CardHeader,
+  CardBody,
+  Button,
+  CardFooter,
+} from 'shards-react'
 
 import RangeDatePicker from './common/RangeDatePicker'
 import Chart from '../utils/chart'
@@ -86,32 +95,40 @@ class AccountOverview extends React.Component {
   }
 
   render() {
-    const { title } = this.props
+    const { account } = this.props
+
     return (
       <Card small className="h-100">
         <CardHeader className="border-bottom">
-          <h6 className="m-0">{title}</h6>
+          <h6 className="m-0">{`${account} Account Details`}</h6>
         </CardHeader>
         <CardBody className="pt-0">
-          <Row className="border-bottom py-2 bg-light">
-            <Col sm="6" className="d-flex mb-2 mb-sm-0">
-              <RangeDatePicker />
-            </Col>
-            <Col>
-              <Button
-                size="sm"
-                className="d-flex btn-white ml-auto mr-auto ml-sm-auto mr-sm-0 mt-3 mt-sm-0"
-              >
-                View Full Report &rarr;
-              </Button>
-            </Col>
-          </Row>
           <canvas
             height="120"
             ref={this.canvasRef}
             style={{ maxWidth: '100% !important' }}
           />
         </CardBody>
+        <CardFooter className="d-flex justify-content-around">
+          <Button size="md" className="btn-white" style={{ width: 100 }}>
+            1d
+          </Button>
+          <Button size="md" className="btn-white" style={{ width: 100 }}>
+            1w
+          </Button>
+          <Button size="md" className="btn-white" style={{ width: 100 }}>
+            1m
+          </Button>
+          <Button size="md" className="btn-white" style={{ width: 100 }}>
+            3m
+          </Button>
+          <Button size="md" className="btn-white" style={{ width: 100 }}>
+            1y
+          </Button>
+          <Button size="md" className="btn-white" style={{ width: 100 }}>
+            All
+          </Button>
+        </CardFooter>
       </Card>
     )
   }
@@ -133,7 +150,6 @@ AccountOverview.propTypes = {
 }
 
 AccountOverview.defaultProps = {
-  title: 'Users Overview',
   chartData: {
     labels: Array.from(new Array(30), (_, i) => (i === 0 ? 1 : i)),
     datasets: [
@@ -229,4 +245,8 @@ AccountOverview.defaultProps = {
   },
 }
 
-export default AccountOverview
+const mapStateToProps = state => ({
+  account: state.trade.account,
+})
+
+export default connect(mapStateToProps)(AccountOverview)
