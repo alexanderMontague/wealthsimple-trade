@@ -6,63 +6,63 @@ import { createResponse } from '../../utils/helpers'
 
 // STATUS
 function* getUserStatus({ payload }) {
-    let statusResponse
+  let statusResponse
 
-    try {
-        // pass token object as string in Auth header
-        statusResponse = yield getStatus(JSON.stringify(payload))
-    } catch (error) {
-        // if we have an error, invalidate tokens
-        delete window.localStorage.tokens
+  try {
+    // pass token object as string in Auth header
+    statusResponse = yield getStatus(JSON.stringify(payload))
+  } catch (error) {
+    // if we have an error, invalidate tokens
+    delete window.localStorage.tokens
 
-        statusResponse = createResponse(
-            error.response?.status,
-            error.message,
-            null,
-            true
-        )
-    }
+    statusResponse = createResponse(
+      error.response?.status,
+      error.message,
+      {},
+      true
+    )
+  }
 
-    return yield put(authActions.statusResponse(statusResponse))
+  return yield put(authActions.statusResponse(statusResponse))
 }
 
 // LOGIN
 function* attemptLoginUser({ payload }) {
-    let loginResponse
+  let loginResponse
 
-    try {
-        loginResponse = yield loginUser(payload)
-    } catch (error) {
-        loginResponse = createResponse(
-            error.response?.status,
-            error.message,
-            null,
-            true
-        )
-    }
+  try {
+    loginResponse = yield loginUser(payload)
+  } catch (error) {
+    loginResponse = createResponse(
+      error.response?.status,
+      error.message,
+      {},
+      true
+    )
+  }
 
-    if (loginResponse.error) {
-        return yield put(authActions.loginFailure(loginResponse))
-    }
+  if (loginResponse.error) {
+    return yield put(authActions.loginFailure(loginResponse))
+  }
 
-    // if login is successful, update tokens and dispatch success
-    window.localStorage.tokens = JSON.stringify(loginResponse.data.tokens)
-    yield put(authActions.loginSuccess(loginResponse))
+  // if login is successful, update tokens and dispatch success
+  window.localStorage.tokens = JSON.stringify(loginResponse.data.tokens)
+  yield put(authActions.loginSuccess(loginResponse))
 }
 
 // LOGOUT
 function* attemptLogoutUser() {
-    const logoutResponse = yield logoutUser()
+  const logoutResponse = yield logoutUser()
 
-    if (logoutResponse.error) {
-        return yield put(authActions.logoutFailure(logoutResponse))
-    }
+  if (logoutResponse.error) {
+    return yield put(authActions.logoutFailure(logoutResponse))
+  }
 
-    yield put(authActions.logoutSuccess(logoutResponse))
+  yield put(authActions.logoutSuccess(logoutResponse))
 }
 
 export default function* authSaga() {
-    yield takeLatest(LOGIN_USER, attemptLoginUser)
-    yield takeLatest(LOGOUT_USER, attemptLogoutUser)
-    yield takeLatest(GET_STATUS, getUserStatus)
+  yield takeLatest(LOGIN_USER, attemptLoginUser)
+  yield takeLatest(LOGOUT_USER, attemptLogoutUser)
+  yield takeLatest(GET_STATUS, getUserStatus)
 }

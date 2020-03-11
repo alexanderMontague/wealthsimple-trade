@@ -3,8 +3,8 @@ import { WST_accounts, WST_positions } from '../helpers/requests'
 
 // gets all portfolio data about user including accounts and positions for those accounts
 export async function getPortfolioData(tokens) {
-  let accounts = {},
-    positions = []
+  let accounts = {}
+  let positions = []
 
   // fetch account info
   try {
@@ -28,21 +28,14 @@ export async function getPortfolioData(tokens) {
   }
 
   positions.forEach(option => {
-    // we don't need every option grouping here, we can get that later if needed
-    const { groups, ...optionInfo } = option
+    // we don't need all sparkline quotes here
+    const { sparkline, ...optionInfo } = option
 
-    // add every position to account positions array
-    const currAccountPositions = accounts[option.account_id].positions
-    accounts[option.account_id].positions = [
-      ...currAccountPositions,
-      optionInfo,
-    ]
+    // add each option to the account it belongs to
+    accounts[optionInfo.account_id].positions.push(optionInfo)
   })
 
-  return {
-    accounts,
-    positions,
-  }
+  return accounts
 }
 
 export async function getPositions() {}

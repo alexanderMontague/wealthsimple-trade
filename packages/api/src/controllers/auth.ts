@@ -29,7 +29,7 @@ export async function getStatus(req, res, next) {
 
   if (rawTokens === 'null') {
     return res.json(
-      createResponse(200, 'Auth token missing or expired', null, true)
+      createResponse(200, 'Auth token missing or expired', {}, true)
     )
   }
 
@@ -39,7 +39,7 @@ export async function getStatus(req, res, next) {
   try {
     statusResponse = await WST_status(tokens)
   } catch (error) {
-    return res.json(createResponse(200, getError(error), null, true))
+    return res.json(createResponse(200, getError(error), {}, true))
   }
 
   // get portfolio data
@@ -48,7 +48,8 @@ export async function getStatus(req, res, next) {
   // merge data
   const accountInfo = {
     ...statusResponse,
-    ...portfolioData,
+    tokens,
+    portfolioData,
   }
 
   res.json(createResponse(200, 'Authenticated', accountInfo, false))
@@ -96,6 +97,7 @@ export async function login(req, res, next) {
     return res.json(createResponse(200, getError(error), null, true))
   }
 
+  // pull tokens out of headers to send back for future requests
   const tokens = {
     access: loginResponse.headers['x-access-token'],
     refresh: loginResponse.headers['x-refresh-token'],
@@ -108,7 +110,7 @@ export async function login(req, res, next) {
     createResponse(
       200,
       'Successfully logged in!',
-      { ...loginResponse.data, tokens, ...portfolioData },
+      { ...loginResponse.data, tokens, portfolioData },
       false
     )
   )
