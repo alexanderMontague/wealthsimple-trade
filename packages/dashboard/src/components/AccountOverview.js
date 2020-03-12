@@ -129,7 +129,7 @@ class AccountOverview extends React.Component {
     return (
       <Card small className="h-100">
         <CardHeader className="border-bottom">
-          <h6 className="m-0">{`${account} Account Details`}</h6>
+          <h6 className="m-0">{account ? `${account.display} Account Details` : "Select an Account"}</h6>
         </CardHeader>
         <CardBody className="pt-0">
           <canvas
@@ -258,7 +258,7 @@ AccountOverview.defaultProps = {
 }
 
 const mapStateToProps = state => ({
-  account: state.trade.account,
+  account: state.trade.selectedAccount,
 })
 
 export default connect(mapStateToProps)(AccountOverview)

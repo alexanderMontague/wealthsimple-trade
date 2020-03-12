@@ -10,9 +10,9 @@ import {
     CardFooter,
 } from 'shards-react'
 
-import Chart from '../../utils/chart'
+import Chart from '../utils/chart'
 
-class UsersByDevice extends React.Component {
+class AccountBreakdown extends React.Component {
     constructor(props) {
         super(props)
 
@@ -86,7 +86,7 @@ class UsersByDevice extends React.Component {
     }
 }
 
-UsersByDevice.propTypes = {
+AccountBreakdown.propTypes = {
     /**
      * The component's title.
      */
@@ -105,8 +105,8 @@ UsersByDevice.propTypes = {
     chartData: PropTypes.object,
 }
 
-UsersByDevice.defaultProps = {
-    title: 'Users by device',
+AccountBreakdown.defaultProps = {
+    title: 'Asset Breakdown',
     chartData: {
         datasets: [
             {
@@ -123,4 +123,4 @@ UsersByDevice.defaultProps = {
     },
 }
 
-export default UsersByDevice
+export default AccountBreakdown

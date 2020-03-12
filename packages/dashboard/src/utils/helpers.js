@@ -23,11 +23,11 @@ export const createResponse = (
 // given a WST account id, return the formatted values
 export const getFormattedAccount = account => {
   if (account.includes('tfsa')) {
-    return { value: 'tfsa', display: 'TFSA' }
+    return { value: account, display: 'TFSA' }
   } else if (account.includes('rrsp')) {
-    return { value: 'rrsp', display: 'RRSP' }
+    return { value: account, display: 'RRSP' }
   } else if (account.includes('non-registered')) {
-    return { value: 'non-registered', display: 'Personal' }
+    return { value: account, display: 'Personal' }
   }
 
   return {

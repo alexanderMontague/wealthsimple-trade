@@ -120,7 +120,7 @@ class SmallStats extends React.Component {
 
     const percentageClasses = classNames(
       'stats-small__percentage',
-      `stats-small__percentage--${increase ? 'increase' : 'decrease'}`
+      `stats-small__percentage--${increase}`
     )
 
     const canvasHeight = variation === '1' ? 120 : 60
@@ -168,7 +168,7 @@ SmallStats.propTypes = {
   /**
    * Whether is a value increase, or not.
    */
-  increase: PropTypes.bool,
+  increase: PropTypes.string,
   /**
    * The Chart.js configuration object.
    */
@@ -188,7 +188,7 @@ SmallStats.propTypes = {
 }
 
 SmallStats.defaultProps = {
-  increase: true,
+  increase: 'true',
   percentage: 0,
   value: 0,
   label: 'Label',

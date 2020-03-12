@@ -18,10 +18,10 @@ import {
 } from 'shards-react'
 
 import AccountOverview from '../components/AccountOverview'
+import AccountBreakdown from '../components/AccountBreakdown'
 
 import PageTitle from '../components/common/PageTitle'
 import SmallStats from '../components/common/SmallStats'
-import UsersByDevice from '../components/blog/UsersByDevice'
 import NewDraft from '../components/blog/NewDraft'
 import Discussions from '../components/blog/Discussions'
 import TopReferrals from '../components/common/TopReferrals'
@@ -31,10 +31,11 @@ const Holdings = ({ smallStats, selectAccount, accounts }) => {
     isOpen: false,
     selected: null,
   })
+  const [selectedAccount, setSelectedAccount] = useState(null)
 
   // TODO shards dropdowns are jank... figure out a better way to do this
   const handleDropdownClick = ({ target }) => {
-    const account = getFormattedAccount(target.id)
+    const currentAccount = getFormattedAccount(target.id)
 
     // if drop down opened / closed with no value selected
     if (!target.id) {
@@ -44,11 +45,17 @@ const Holdings = ({ smallStats, selectAccount, accounts }) => {
       })
     }
 
+    // update account dropdown
     setDropdownState({
       isOpen: false,
-      selected: account,
+      selected: currentAccount,
     })
-    selectAccount(account)
+
+    // set current account from all
+    setSelectedAccount(accounts[currentAccount.value])
+
+    // dispatch selected account to redux
+    selectAccount(currentAccount)
   }
 
   const renderAccounts = () =>
@@ -64,6 +71,26 @@ const Holdings = ({ smallStats, selectAccount, accounts }) => {
         </DropdownItem>
       )
     })
+
+    const renderSmallStats = () => {
+        console.log(selectedAccount)
+
+        return smallStats.map((stats, idx) => (
+          <Col className="col-lg mb-4" key={idx} {...stats.attrs}>
+            <SmallStats
+              id={`small-stats-${idx}`}
+              variation="1"
+              chartData={stats.datasets}
+              chartLabels={stats.chartLabels}
+              label={stats.label}
+              value={stats.value}
+              percentage={stats.percentage}
+              increase={stats.increase}
+              decrease={stats.decrease}
+            />
+          </Col>
+        ))
+    }
 
   return (
     <Container fluid className="main-content-container px-4">
@@ -104,21 +131,7 @@ const Holdings = ({ smallStats, selectAccount, accounts }) => {
 
       {/* Portfolio Quick Look */}
       <Row>
-        {smallStats.map((stats, idx) => (
-          <Col className="col-lg mb-4" key={idx} {...stats.attrs}>
-            <SmallStats
-              id={`small-stats-${idx}`}
-              variation="1"
-              chartData={stats.datasets}
-              chartLabels={stats.chartLabels}
-              label={stats.label}
-              value={stats.value}
-              percentage={stats.percentage}
-              increase={stats.increase}
-              decrease={stats.decrease}
-            />
-          </Col>
-        ))}
+        {renderSmallStats()}
       </Row>
 
       <Row>
@@ -128,7 +141,7 @@ const Holdings = ({ smallStats, selectAccount, accounts }) => {
         </Col>
         {/* Users by Device */}
         <Col lg="3" md="12" sm="12" className="mb-4">
-          <UsersByDevice />
+          <AccountBreakdown />
         </Col>
       </Row>
 
@@ -159,13 +172,15 @@ Holdings.propTypes = {
   smallStats: PropTypes.array,
 }
 
+const randNum = () => Math.random() * (7 - 2) + 2;
+
 Holdings.defaultProps = {
   smallStats: [
     {
-      label: 'Balance',
-      value: '$ 2,390',
-      percentage: '4.7%',
-      increase: true,
+      label: 'Current Balance',
+      value: "---",
+      percentage: '0.00%',
+      increase: 'neutral',
       chartLabels: [null, null, null, null, null, null, null],
       attrs: { md: '6', sm: '6' },
       datasets: [
@@ -173,17 +188,17 @@ Holdings.defaultProps = {
           label: 'Today',
           fill: 'start',
           borderWidth: 1.5,
-          backgroundColor: 'rgba(0, 184, 216, 0.1)',
-          borderColor: 'rgb(0, 184, 216)',
-          data: [1, 2, 1, 3, 5, 4, 7],
+          backgroundColor: 'rgb(0,184,216, 0.1)',
+          borderColor: 'rgb(0,123,255)',
+          data: [randNum(), randNum(),randNum(),randNum(),randNum(),randNum(),randNum()],
         },
       ],
     },
     {
       label: 'Day Gain',
-      value: '$ 182',
-      percentage: '12.4',
-      increase: true,
+      value: "---",
+      percentage: '0.00%',
+      increase: 'neutral',
       chartLabels: [null, null, null, null, null, null, null],
       attrs: { md: '6', sm: '6' },
       datasets: [
@@ -191,28 +206,27 @@ Holdings.defaultProps = {
           label: 'Today',
           fill: 'start',
           borderWidth: 1.5,
-          backgroundColor: 'rgba(23,198,113,0.1)',
-          borderColor: 'rgb(23,198,113)',
-          data: [1, 2, 3, 3, 3, 4, 4],
+          backgroundColor: 'rgb(0,184,216, 0.1)',
+          borderColor: 'rgb(0,123,255)',
+          data: [randNum(), randNum(),randNum(),randNum(),randNum(),randNum(),randNum()],
         },
       ],
     },
     {
-      label: 'Total Gain',
-      value: '$ 8,147',
-      percentage: '3.8%',
-      increase: false,
-      decrease: true,
+      label: 'Net Gain',
+      value: "---",
+      percentage: '0.00%',
+      increase: 'neutral',
       chartLabels: [null, null, null, null, null, null, null],
-      attrs: { md: '4', sm: '6' },
+      attrs: { md: '6', sm: '6' },
       datasets: [
         {
           label: 'Today',
           fill: 'start',
           borderWidth: 1.5,
-          backgroundColor: 'rgba(255,180,0,0.1)',
-          borderColor: 'rgb(255,180,0)',
-          data: [2, 3, 3, 3, 4, 3, 3],
+          backgroundColor: 'rgb(0,184,216, 0.1)',
+          borderColor: 'rgb(0,123,255)',
+          data: [randNum(), randNum(),randNum(),randNum(),randNum(),randNum(),randNum()],
         },
       ],
     },
