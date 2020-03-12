@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
 import { tradeActions } from '../redux/actions'
+
+import { getFormattedAccount } from '../utils/helpers'
 
 import {
   Container,
@@ -24,13 +26,16 @@ import NewDraft from '../components/blog/NewDraft'
 import Discussions from '../components/blog/Discussions'
 import TopReferrals from '../components/common/TopReferrals'
 
-const Holdings = ({ smallStats, selectAccount }) => {
+const Holdings = ({ smallStats, selectAccount, accounts }) => {
   const [dropdownState, setDropdownState] = useState({
     isOpen: false,
     selected: null,
   })
 
+  // TODO shards dropdowns are jank... figure out a better way to do this
   const handleDropdownClick = ({ target }) => {
+    const account = getFormattedAccount(target.id)
+
     // if drop down opened / closed with no value selected
     if (!target.id) {
       return setDropdownState({
@@ -39,9 +44,26 @@ const Holdings = ({ smallStats, selectAccount }) => {
       })
     }
 
-    setDropdownState({ isOpen: false, selected: target.id })
-    selectAccount(target.id)
+    setDropdownState({
+      isOpen: false,
+      selected: account,
+    })
+    selectAccount(account)
   }
+
+  const renderAccounts = () =>
+    Object.keys(accounts).map(account => {
+      const formattedAccount = getFormattedAccount(account)
+      return (
+        <DropdownItem
+          key={`${formattedAccount.value}-dropdown`}
+          id={formattedAccount.value}
+          active={dropdownState.selected === formattedAccount.value}
+        >
+          {formattedAccount.display}
+        </DropdownItem>
+      )
+    })
 
   return (
     <Container fluid className="main-content-container px-4">
@@ -70,28 +92,11 @@ const Holdings = ({ smallStats, selectAccount }) => {
                 className="h-100"
                 style={{ width: '150px', fontSize: '15px' }}
               >
-                {dropdownState.selected || ' Account Type'}
+                {Object.keys(accounts).length !== 0
+                  ? dropdownState.selected?.display || 'Account Type'
+                  : 'No Accounts!'}
               </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem
-                  id="tfsa"
-                  active={dropdownState.selected === 'tfsa'}
-                >
-                  TFSA
-                </DropdownItem>
-                <DropdownItem
-                  id="rrsp"
-                  active={dropdownState.selected === 'rrsp'}
-                >
-                  RRSP
-                </DropdownItem>
-                <DropdownItem
-                  id="test"
-                  active={dropdownState.selected === 'test'}
-                >
-                  Something else here
-                </DropdownItem>
-              </DropdownMenu>
+              <DropdownMenu right>{renderAccounts()}</DropdownMenu>
             </Dropdown>
           </InputGroup>
         </Col>
@@ -214,8 +219,12 @@ Holdings.defaultProps = {
   ],
 }
 
+const mapStateToProps = state => ({
+  accounts: state.trade.accounts,
+})
+
 const mapDispatchToProps = {
   selectAccount: tradeActions.selectAccount,
 }
 
-export default connect(null, mapDispatchToProps)(Holdings)
+export default connect(mapStateToProps, mapDispatchToProps)(Holdings)

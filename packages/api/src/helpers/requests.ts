@@ -1,7 +1,5 @@
 import axios from 'axios'
 
-const request = axios.create()
-
 // Wealthsimple Trade Requests
 const baseURL = 'https://trade-service.wealthsimple.com'
 const getConfig = tokens => ({

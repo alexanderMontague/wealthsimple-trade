@@ -1,3 +1,5 @@
+// Example store structure
+
 export const store = {
   auth: {
     user: {

@@ -29,8 +29,11 @@ axiosLogger({
                 config?.data
             )} | HEADERS: ${JSON.stringify(config.headers)}`
         ),
-    response: (debug, response) =>
-        debug(`[RESPONSE] | DATA: ${JSON.stringify(response?.data)}`),
+    response: (debug, response) => {
+        const data = JSON.stringify(response?.data)
+        debug(`[RESPONSE] | DATA: ${data.substring(0, 300)}...`)
+    }
+        ,
     error: (debug, error) =>
         debug(
             `[ERROR] | Message: ${error.message} | Reason: ${error.response?.data?.error}`

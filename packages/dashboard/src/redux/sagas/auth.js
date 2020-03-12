@@ -52,13 +52,20 @@ function* attemptLoginUser({ payload }) {
 
 // LOGOUT
 function* attemptLogoutUser() {
-  const logoutResponse = yield logoutUser()
+  // const logoutResponse = yield logoutUser()
 
-  if (logoutResponse.error) {
-    return yield put(authActions.logoutFailure(logoutResponse))
-  }
+  // if (logoutResponse.error) {
+  //   return yield put(authActions.logoutFailure(logoutResponse))
+  // }
 
-  yield put(authActions.logoutSuccess(logoutResponse))
+  // For now just wipe the auth tokens from localStorage
+  // as it doesnt look like WST has dedicated a dedicated logout
+  // We can simply regenerate them every login as many times as we need
+  delete window.localStorage.tokens
+
+  yield put(
+    authActions.logoutSuccess(createResponse(200, 'Logged out', null, null))
+  )
 }
 
 export default function* authSaga() {

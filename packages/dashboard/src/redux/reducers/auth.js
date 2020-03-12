@@ -70,6 +70,7 @@ const authReducer = (prevState = initialState, { type, payload }) => {
         isLoginLoading: false,
         isLoginError: false,
         loginMessage: payload.message,
+        logoutMessage: null,
         isLoggedIn: true,
       }
     }
@@ -96,6 +97,7 @@ const authReducer = (prevState = initialState, { type, payload }) => {
         isLogoutError: false,
         logoutMessage: payload.message,
         isLoggedIn: false,
+        loginMessage: null,
       }
     }
 

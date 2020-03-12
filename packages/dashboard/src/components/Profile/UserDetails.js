@@ -1,5 +1,9 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
+
+import { authActions } from '../../redux/actions'
+
 import {
   Card,
   CardHeader,
@@ -16,9 +20,8 @@ import {
 } from 'shards-react'
 
 const UserDetails = ({ title, user }) => {
-  const logoutHandler = () => {
-    console.log('hey there how are ya')
-  }
+  const dispatch = useDispatch()
+  const logoutUser = () => dispatch(authActions.logoutUser())
 
   return (
     <Card small className="mb-4">
@@ -106,7 +109,7 @@ const UserDetails = ({ title, user }) => {
                   theme="accent"
                   className="bg-danger text-center rounded p-3"
                   size="md"
-                  onClick={logoutHandler}
+                  onClick={logoutUser}
                 >
                   Logout
                 </Button>

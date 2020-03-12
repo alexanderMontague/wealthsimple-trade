@@ -2,6 +2,7 @@ import {
   SELECT_ACCOUNT,
   LOGIN_USER_SUCCESS,
   GET_STATUS_RESPONSE,
+  LOGOUT_USER_SUCCESS,
 } from '../constants'
 
 const initialState = {
@@ -25,6 +26,13 @@ const tradeState = (prevState = initialState, { type, payload }) => {
       return {
         ...prevState,
         accounts: portfolioData,
+      }
+    }
+
+    case LOGOUT_USER_SUCCESS: {
+      return {
+        ...prevState,
+        accounts: {},
       }
     }
 

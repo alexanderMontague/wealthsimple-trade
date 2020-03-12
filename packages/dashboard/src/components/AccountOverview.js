@@ -19,6 +19,12 @@ class AccountOverview extends React.Component {
     super(props)
 
     this.canvasRef = React.createRef()
+
+    this.state = {
+      selectedRange: '1d',
+    }
+
+    this.portfolioRanges = ['1d', '1w', '1m', '3m', '1y', 'All']
   }
 
   componentDidMount() {
@@ -94,6 +100,29 @@ class AccountOverview extends React.Component {
     BlogUsersOverview.render()
   }
 
+  selectRange = event => {
+    const selectedRange = event.target.value
+    this.setState({ selectedRange })
+  }
+
+  renderButtonas = () =>
+    this.portfolioRanges.map(range => (
+      <Button
+        key={`${range}-button`}
+        size="md"
+        className="btn-white"
+        style={{
+          width: 100,
+          backgroundColor: this.state.selectedRange === range && '#007bff',
+          color: this.state.selectedRange === range && '#ffffff',
+        }}
+        value={range}
+        onClick={this.selectRange}
+      >
+        {range}
+      </Button>
+    ))
+
   render() {
     const { account } = this.props
 
@@ -110,24 +139,7 @@ class AccountOverview extends React.Component {
           />
         </CardBody>
         <CardFooter className="d-flex justify-content-around">
-          <Button size="md" className="btn-white" style={{ width: 100 }}>
-            1d
-          </Button>
-          <Button size="md" className="btn-white" style={{ width: 100 }}>
-            1w
-          </Button>
-          <Button size="md" className="btn-white" style={{ width: 100 }}>
-            1m
-          </Button>
-          <Button size="md" className="btn-white" style={{ width: 100 }}>
-            3m
-          </Button>
-          <Button size="md" className="btn-white" style={{ width: 100 }}>
-            1y
-          </Button>
-          <Button size="md" className="btn-white" style={{ width: 100 }}>
-            All
-          </Button>
+          {this.renderButtonas()}
         </CardFooter>
       </Card>
     )
