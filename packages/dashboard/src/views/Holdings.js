@@ -26,7 +26,13 @@ import NewDraft from '../components/blog/NewDraft'
 import Discussions from '../components/blog/Discussions'
 import TopReferrals from '../components/common/TopReferrals'
 
-const Holdings = ({ smallStats, selectAccount, accounts }) => {
+const Holdings = ({
+  smallStats,
+  selectAccount,
+  accounts,
+  getHistory,
+  user,
+}) => {
   const [dropdownState, setDropdownState] = useState({
     isOpen: false,
     selected: null,
@@ -72,25 +78,34 @@ const Holdings = ({ smallStats, selectAccount, accounts }) => {
       )
     })
 
-    const renderSmallStats = () => {
-        console.log(selectedAccount)
-
-        return smallStats.map((stats, idx) => (
-          <Col className="col-lg mb-4" key={idx} {...stats.attrs}>
-            <SmallStats
-              id={`small-stats-${idx}`}
-              variation="1"
-              chartData={stats.datasets}
-              chartLabels={stats.chartLabels}
-              label={stats.label}
-              value={stats.value}
-              percentage={stats.percentage}
-              increase={stats.increase}
-              decrease={stats.decrease}
-            />
-          </Col>
-        ))
+  const renderSmallStats = () => {
+    // if we have a valid account, override with correct info
+    if (!!selectedAccount) {
+      // do things
+      console.log('act selected')
+      getHistory({
+        time: '1d',
+        account: dropdownState.selected.value,
+        tokens: user.tokens,
+      })
     }
+
+    return smallStats.map((stats, idx) => (
+      <Col className="col-lg mb-4" key={idx} {...stats.attrs}>
+        <SmallStats
+          id={`small-stats-${idx}`}
+          variation="1"
+          chartData={stats.datasets}
+          chartLabels={stats.chartLabels}
+          label={stats.label}
+          value={stats.value}
+          percentage={stats.percentage}
+          increase={stats.increase}
+          decrease={stats.decrease}
+        />
+      </Col>
+    ))
+  }
 
   return (
     <Container fluid className="main-content-container px-4">
@@ -130,9 +145,7 @@ const Holdings = ({ smallStats, selectAccount, accounts }) => {
       </Row>
 
       {/* Portfolio Quick Look */}
-      <Row>
-        {renderSmallStats()}
-      </Row>
+      <Row>{renderSmallStats()}</Row>
 
       <Row>
         {/* Account Overview */}
@@ -172,13 +185,13 @@ Holdings.propTypes = {
   smallStats: PropTypes.array,
 }
 
-const randNum = () => Math.random() * (7 - 2) + 2;
+const randNum = () => Math.random() * (7 - 2) + 2
 
 Holdings.defaultProps = {
   smallStats: [
     {
       label: 'Current Balance',
-      value: "---",
+      value: '---',
       percentage: '0.00%',
       increase: 'neutral',
       chartLabels: [null, null, null, null, null, null, null],
@@ -190,13 +203,21 @@ Holdings.defaultProps = {
           borderWidth: 1.5,
           backgroundColor: 'rgb(0,184,216, 0.1)',
           borderColor: 'rgb(0,123,255)',
-          data: [randNum(), randNum(),randNum(),randNum(),randNum(),randNum(),randNum()],
+          data: [
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+          ],
         },
       ],
     },
     {
       label: 'Day Gain',
-      value: "---",
+      value: '---',
       percentage: '0.00%',
       increase: 'neutral',
       chartLabels: [null, null, null, null, null, null, null],
@@ -208,13 +229,21 @@ Holdings.defaultProps = {
           borderWidth: 1.5,
           backgroundColor: 'rgb(0,184,216, 0.1)',
           borderColor: 'rgb(0,123,255)',
-          data: [randNum(), randNum(),randNum(),randNum(),randNum(),randNum(),randNum()],
+          data: [
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+          ],
         },
       ],
     },
     {
       label: 'Net Gain',
-      value: "---",
+      value: '---',
       percentage: '0.00%',
       increase: 'neutral',
       chartLabels: [null, null, null, null, null, null, null],
@@ -226,7 +255,15 @@ Holdings.defaultProps = {
           borderWidth: 1.5,
           backgroundColor: 'rgb(0,184,216, 0.1)',
           borderColor: 'rgb(0,123,255)',
-          data: [randNum(), randNum(),randNum(),randNum(),randNum(),randNum(),randNum()],
+          data: [
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+          ],
         },
       ],
     },
@@ -235,10 +272,12 @@ Holdings.defaultProps = {
 
 const mapStateToProps = state => ({
   accounts: state.trade.accounts,
+  user: state.auth.user,
 })
 
 const mapDispatchToProps = {
   selectAccount: tradeActions.selectAccount,
+  getHistory: tradeActions.getHistoricalQuotes,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Holdings)

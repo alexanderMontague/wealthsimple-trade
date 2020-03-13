@@ -14,5 +14,7 @@ export const LOGOUT_USER = 'LOGOUT_USER'
 export const LOGOUT_USER_SUCCESS = 'LOGOUT_USER_SUCCESS'
 export const LOGOUT_USER_FAIL = 'LOGOUT_USER_FAIL'
 
-// Portfolio
+// Trade
 export const SELECT_ACCOUNT = 'SELECT_ACCOUNT'
+export const GET_HISTORY = 'GET_HISTORY'
+export const GET_HISTORY_RESPONSE = 'GET_HISTORY_RESPONSE'

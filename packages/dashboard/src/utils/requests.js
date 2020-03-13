@@ -2,15 +2,15 @@ import axios from 'axios'
 
 const IS_DEV = process.env.NODE_ENV === 'development'
 const BASE_URL = IS_DEV
-    ? 'http://localhost:3334/api/v1'
-    : 'https://TBD.ca/api/v1'
+  ? 'http://localhost:3334/api/v1'
+  : 'https://TBD.ca/api/v1'
 
 const getHeaders = ({ tokens }) => ({
-    headers: {
-        common: {
-            tokens,
-        },
+  headers: {
+    common: {
+      tokens,
     },
+  },
 })
 
 /**
@@ -27,8 +27,7 @@ const getHeaders = ({ tokens }) => ({
  *   }
  */
 export const getStatus = async tokens =>
-    (await axios.get(`${BASE_URL}/status`, getHeaders({ tokens }))).data
-// (await axios.get(`${BASE_URL}/status`)).data
+  (await axios.get(`${BASE_URL}/status`, getHeaders({ tokens }))).data
 
 /**
  *  Request Format:
@@ -47,19 +46,13 @@ export const getStatus = async tokens =>
  *   }
  */
 export const loginUser = async credentials =>
-    (await axios.post(`${BASE_URL}/login`, credentials)).data
+  (await axios.post(`${BASE_URL}/login`, credentials)).data
 
-/**
- *  Request Format:
- *  GET
- *
- *  Response Format:
- *  {
- *     code: Integer,
- *     message: String,
- *     data: Object || Array || null,
- *     error: Boolean
- *   }
- */
-// export const getAccounts = async tokens =>
-//     (await axios.post(`${BASE_URL}/login`, credentials)).data
+// get historic quotes on account from current time period
+export const getHistory = async ({ time, account, tokens }) =>
+  (
+    await axios.get(
+      `${BASE_URL}/history/${time}?account_id=${account}`,
+      getHeaders({ tokens })
+    )
+  ).data

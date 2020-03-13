@@ -1,13 +1,17 @@
 import {
   SELECT_ACCOUNT,
-  LOGIN_USER_SUCCESS,
   GET_STATUS_RESPONSE,
+  LOGIN_USER_SUCCESS,
   LOGOUT_USER_SUCCESS,
+  GET_HISTORY,
+  GET_HISTORY_RESPONSE,
 } from '../constants'
 
 const initialState = {
   selectedAccount: null,
   accounts: {},
+  isHistoryLoading: false,
+  historicQuotes: {},
 }
 
 const tradeState = (prevState = initialState, { type, payload }) => {
@@ -43,6 +47,24 @@ const tradeState = (prevState = initialState, { type, payload }) => {
       return {
         ...prevState,
         accounts: portfolioData,
+      }
+    }
+
+    case GET_HISTORY: {
+      return {
+        ...prevState,
+        isHistoryLoading: true,
+      }
+    }
+
+    case GET_HISTORY_RESPONSE: {
+      return {
+        ...prevState,
+        isHistoryLoading: false,
+        historicQuotes: {
+          ...historicQuotes,
+          [payload.data.time]: payload.data.values,
+        },
       }
     }
 

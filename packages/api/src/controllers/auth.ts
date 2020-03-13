@@ -4,7 +4,7 @@ import { WST_login, WST_status } from '../helpers/requests'
 import { getPortfolioData } from '../components/portfolio'
 
 /*
- *   POST /api/v1/status
+ *   GET /api/v1/status
  *
  *   ENCODED
  *   REQ: {
