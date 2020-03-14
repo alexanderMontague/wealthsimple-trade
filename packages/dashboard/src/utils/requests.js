@@ -49,10 +49,10 @@ export const loginUser = async credentials =>
   (await axios.post(`${BASE_URL}/login`, credentials)).data
 
 // get historic quotes on account from current time period
-export const getHistory = async ({ time, account, tokens }) =>
+export const getHistory = async ({ times, account, tokens }) =>
   (
     await axios.get(
-      `${BASE_URL}/history/${time}?account_id=${account}`,
+      `${BASE_URL}/history/${times.toString()}?account_id=${account}`,
       getHeaders({ tokens })
     )
   ).data

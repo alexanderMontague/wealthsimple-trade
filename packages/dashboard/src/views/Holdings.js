@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import { tradeActions } from '../redux/actions'
 
 import { getFormattedAccount } from '../utils/helpers'
+import { getHistory } from '../utils/requests'
 
 import {
   Container,
@@ -32,12 +33,25 @@ const Holdings = ({
   accounts,
   getHistory,
   user,
+  historicQuotes,
 }) => {
   const [dropdownState, setDropdownState] = useState({
     isOpen: false,
     selected: null,
   })
   const [selectedAccount, setSelectedAccount] = useState(null)
+
+  useEffect(() => {
+    // fetch 1d stats for account overview on account switch
+    if (!!selectedAccount) {
+      getHistory({
+        times: ['1d', 'all'],
+        account: dropdownState.selected.value,
+        tokens: JSON.stringify(user.tokens),
+      })
+    }
+    return () => null
+  }, [selectedAccount])
 
   // TODO shards dropdowns are jank... figure out a better way to do this
   const handleDropdownClick = ({ target }) => {
@@ -79,15 +93,31 @@ const Holdings = ({
     })
 
   const renderSmallStats = () => {
-    // if we have a valid account, override with correct info
-    if (!!selectedAccount) {
-      // do things
-      console.log('act selected')
-      getHistory({
-        time: '1d',
-        account: dropdownState.selected.value,
-        tokens: user.tokens,
-      })
+    // if we have account overview data, override defaults
+    if (historicQuotes['1d']) {
+      const numQuotes = historicQuotes['1d'].results.length - 1
+      const currData = historicQuotes['1d'].results[numQuotes]
+
+      // override current balance
+      smallStats[0] = {
+        ...smallStats[0],
+        value: currData.value.amount,
+        percentage: currData.relative_equity_earnings.percentage * 10, // wrong
+      }
+
+      // override day gain
+      smallStats[1] = {
+        ...smallStats[0],
+        value: currData.relative_equity_earnings.amount,
+        percentage: currData.relative_equity_earnings.percentage * 10,
+      }
+
+      // override net gain
+      smallStats[1] = {
+        ...smallStats[2],
+        value: currData.relative_equity_earnings.amount,
+        percentage: currData.relative_equity_earnings.percentage * 10,
+      }
     }
 
     return smallStats.map((stats, idx) => (
@@ -106,6 +136,8 @@ const Holdings = ({
       </Col>
     ))
   }
+
+  const accountSmallStats = renderSmallStats()
 
   return (
     <Container fluid className="main-content-container px-4">
@@ -145,7 +177,7 @@ const Holdings = ({
       </Row>
 
       {/* Portfolio Quick Look */}
-      <Row>{renderSmallStats()}</Row>
+      <Row>{accountSmallStats}</Row>
 
       <Row>
         {/* Account Overview */}
@@ -273,6 +305,7 @@ Holdings.defaultProps = {
 const mapStateToProps = state => ({
   accounts: state.trade.accounts,
   user: state.auth.user,
+  historicQuotes: state.trade.historicQuotes,
 })
 
 const mapDispatchToProps = {

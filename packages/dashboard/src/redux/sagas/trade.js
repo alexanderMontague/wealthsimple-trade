@@ -2,7 +2,7 @@ import { put, takeLatest, select } from 'redux-saga/effects'
 import { getHistory } from '../../utils/requests'
 import { createResponse } from '../../utils/helpers'
 import { tradeActions } from '../actions'
-import { GET_HISTORY, GET } from '../constants'
+import { GET_HISTORY } from '../constants'
 
 function* getAccountHistory({ payload }) {
   let historicData
@@ -16,17 +16,7 @@ function* getAccountHistory({ payload }) {
       true
     )
   }
-
-  return yield put(
-    tradeActions.getHistoricalQuotesResponse(
-      createResponse(
-        200,
-        `Fetched ${payload.time} historic data`,
-        historicData,
-        false
-      )
-    )
-  )
+  return yield put(tradeActions.getHistoricalQuotesResponse(historicData))
 }
 
 export default function* tradeSaga() {

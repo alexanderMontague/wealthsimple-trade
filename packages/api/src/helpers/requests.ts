@@ -31,7 +31,7 @@ export const WST_positions = async tokens =>
   (await axios.get(`${BASE_URL}/account/positions`, getConfig(tokens))).data
 
 export const WST_getHistory = async ({ time, account, tokens }) =>
-  (await axios.post(
-    `${BASE_URL}/history/${time}?account_id=${account}`,
+  (await axios.get(
+    `${BASE_URL}/account/history/${time}?account_id=${account}`,
     getConfig(tokens)
   )).data

@@ -62,8 +62,8 @@ const tradeState = (prevState = initialState, { type, payload }) => {
         ...prevState,
         isHistoryLoading: false,
         historicQuotes: {
-          ...historicQuotes,
-          [payload.data.time]: payload.data.values,
+          ...prevState.historicQuotes,
+          ...payload.data,
         },
       }
     }

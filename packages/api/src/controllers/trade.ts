@@ -1,5 +1,5 @@
 import { createResponse, getError } from '../helpers'
-import  {WST_getHistory} from '../helpers/requests'
+import { WST_getHistory  } from '../helpers/requests'
 
 import { getPortfolioData } from '../components/portfolio'
 
@@ -27,34 +27,34 @@ export async function getHistory(req, res, next) {
   // get stringified tokens from header
   const rawTokens = req.header('tokens')
 
-  if (rawTokens === 'null') {
+  if (!rawTokens || rawTokens === 'null') {
     return res.json(
       createResponse(200, 'Auth token missing or expired', {}, true)
     )
   }
 
-  let statusResponse
+  let historyResponse = {}
   const tokens = JSON.parse(rawTokens)
-  const time = req.params?.time
+  const times = req.params?.times?.split(",")
   const account = req.query?.account_id
 
-  console.log(tokens, time, account)
+  if(!times || !account) {
+    return res.json(
+      createResponse(200, 'Missing time period or account id', {}, true)
+    )
+  }
 
   try {
-    statusResponse = await WST_getHistory({ time, account, tokens })
+  // make all requests to specified historic periods
+   const fetchedHistoricalData = await Promise.all(
+      times.map(time => WST_getHistory({ time, account, tokens }) )
+    )
+
+    // transform array of results to map
+    fetchedHistoricalData.forEach((quote, i) => historyResponse[times[i]] = quote)
   } catch (error) {
     return res.json(createResponse(200, getError(error), {}, true))
   }
 
-  // get portfolio data
-  const portfolioData = await getPortfolioData(tokens)
-
-  // merge data
-  const accountInfo = {
-    ...statusResponse,
-    tokens,
-    portfolioData,
-  }
-
-  res.json(createResponse(200, 'Authenticated', accountInfo, false))
+  res.json(createResponse(200, `Fetched ${times} historic quotes`, historyResponse, false))
 }
