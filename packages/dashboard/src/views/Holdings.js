@@ -94,29 +94,41 @@ const Holdings = ({
 
   const renderSmallStats = () => {
     // if we have account overview data, override defaults
-    if (historicQuotes['1d']) {
-      const numQuotes = historicQuotes['1d'].results.length - 1
-      const currData = historicQuotes['1d'].results[numQuotes]
+    if (historicQuotes['1d'] && historicQuotes['all']) {
+      const currDayData = historicQuotes['1d']
+      const currDayResults = currDayData.results[currDayData.results.length - 1]
+
+      const currAllData = historicQuotes['all']
+      const currAllResults = currAllData.results[currAllData.results.length - 1]
 
       // override current balance
       smallStats[0] = {
         ...smallStats[0],
-        value: currData.value.amount,
-        percentage: currData.relative_equity_earnings.percentage * 10, // wrong
+        value: Math.round(currDayResults.value.amount * 100) / 100,
       }
 
       // override day gain
       smallStats[1] = {
-        ...smallStats[0],
-        value: currData.relative_equity_earnings.amount,
-        percentage: currData.relative_equity_earnings.percentage * 10,
+        ...smallStats[1],
+        value:
+          Math.round(currDayResults.relative_equity_earnings.amount * 100) /
+          100,
+        percentage:
+          Math.round(
+            currDayResults.relative_equity_earnings.percentage * 100 * 100
+          ) / 100,
       }
 
       // override net gain
-      smallStats[1] = {
+      smallStats[2] = {
         ...smallStats[2],
-        value: currData.relative_equity_earnings.amount,
-        percentage: currData.relative_equity_earnings.percentage * 10,
+        value:
+          Math.round(currAllResults.relative_equity_earnings.amount * 100) /
+          100,
+        percentage:
+          Math.round(
+            currAllResults.relative_equity_earnings.percentage * 100 * 100
+          ) / 100,
       }
     }
 
@@ -224,7 +236,6 @@ Holdings.defaultProps = {
     {
       label: 'Current Balance',
       value: '---',
-      percentage: '0.00%',
       increase: 'neutral',
       chartLabels: [null, null, null, null, null, null, null],
       attrs: { md: '6', sm: '6' },

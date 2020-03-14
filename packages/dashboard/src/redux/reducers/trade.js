@@ -37,6 +37,7 @@ const tradeState = (prevState = initialState, { type, payload }) => {
       return {
         ...prevState,
         accounts: {},
+        historicQuotes: {},
       }
     }
 
