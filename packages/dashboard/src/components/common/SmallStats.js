@@ -131,10 +131,14 @@ class SmallStats extends React.Component {
           <div className={innerWrapperClasses}>
             <div className={dataFieldClasses}>
               <span className={labelClasses}>{label}</span>
-              <h6 className={valueClasses}>{value}</h6>
+              <h6 className={valueClasses}>
+                {value !== '---' ? `$${value}` : value}
+              </h6>
             </div>
             <div className={innerDataFieldClasses}>
-              <span className={percentageClasses}>{percentage || null}</span>
+              <span className={percentageClasses}>
+                {percentage ? `${percentage}%` : null}
+              </span>
             </div>
           </div>
           <canvas

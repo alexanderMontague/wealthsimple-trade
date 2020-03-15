@@ -108,27 +108,36 @@ const Holdings = ({
       }
 
       // override day gain
+      const dayAmount = currDayResults.relative_equity_earnings.amount
       smallStats[1] = {
         ...smallStats[1],
-        value:
-          Math.round(currDayResults.relative_equity_earnings.amount * 100) /
-          100,
+        value: Math.round(dayAmount * 100) / 100,
         percentage:
           Math.round(
             currDayResults.relative_equity_earnings.percentage * 100 * 100
           ) / 100,
+        increase: dayAmount > 0 ? 'increase' : 'decrease',
+        datasets: [
+          {
+            // ...smallStats[1].datasets[0],
+            backgroundColor:
+              dayAmount > 0 ? 'rgba(23,198,113,0.1)' : 'rgba(255,65,105,0.1)',
+            borderColor: dayAmount > 0 ? 'rgb(23,198,113)' : 'rgb(255,65,105)',
+          },
+        ],
       }
+      console.log(smallStats[1])
 
       // override net gain
+      const totalAmount = currAllResults.relative_equity_earnings.amount
       smallStats[2] = {
         ...smallStats[2],
-        value:
-          Math.round(currAllResults.relative_equity_earnings.amount * 100) /
-          100,
+        value: Math.round(totalAmount * 100) / 100,
         percentage:
           Math.round(
             currAllResults.relative_equity_earnings.percentage * 100 * 100
           ) / 100,
+        increase: totalAmount > 0 ? 'increase' : 'decrease',
       }
     }
 
@@ -261,7 +270,7 @@ Holdings.defaultProps = {
     {
       label: 'Day Gain',
       value: '---',
-      percentage: '0.00%',
+      percentage: '0.00',
       increase: 'neutral',
       chartLabels: [null, null, null, null, null, null, null],
       attrs: { md: '6', sm: '6' },
@@ -271,7 +280,7 @@ Holdings.defaultProps = {
           fill: 'start',
           borderWidth: 1.5,
           backgroundColor: 'rgb(0,184,216, 0.1)',
-          borderColor: 'rgb(0,123,255)',
+          borderColor: 'rgb(23,198,113)',
           data: [
             randNum(),
             randNum(),
@@ -287,7 +296,7 @@ Holdings.defaultProps = {
     {
       label: 'Net Gain',
       value: '---',
-      percentage: '0.00%',
+      percentage: '0.00',
       increase: 'neutral',
       chartLabels: [null, null, null, null, null, null, null],
       attrs: { md: '6', sm: '6' },
