@@ -71,8 +71,11 @@ const Holdings = ({
       selected: currentAccount,
     })
 
-    // set current account from all
-    setSelectedAccount(accounts[currentAccount.value])
+    // set the selected account locally
+    setSelectedAccount({
+      ...accounts[currentAccount.value],
+      value: currentAccount.value,
+    })
 
     // dispatch selected account to redux
     selectAccount(currentAccount)
@@ -100,32 +103,50 @@ const Holdings = ({
 
       const currAllData = historicQuotes['all']
       const currAllResults = currAllData.results[currAllData.results.length - 1]
-    
+
       // Override cash value (buying power)
       smallStats[0] = {
         ...smallStats[0],
-        value: Math.round(selectedAccount.buying_power.amount * 100) / 100
+        value: Math.round(selectedAccount.buying_power.amount * 100) / 100,
       }
 
       // Override securities value
-
       const positions = selectedAccount.positions
-    
-      let initialValue = 0
-      let securitesValue = positions.reduce(function (accumulator, currentValue) {
-          return accumulator + currentValue.todays_earnings_baseline_value.amount;
-      }, initialValue)
-
-      
+      const securitesValue = positions.reduce(
+        (accumulator, currentValue) =>
+          accumulator + currentValue.todays_earnings_baseline_value.amount,
+        0
+      )
       smallStats[1] = {
         ...smallStats[1],
-        value: Math.round(securitesValue * 100) / 100
+        value: Math.round(securitesValue * 100) / 100,
       }
 
       // override current balance
       smallStats[2] = {
         ...smallStats[2],
         value: Math.round(currDayResults.value.amount * 100) / 100,
+      }
+
+      // override net gain
+      const totalAmount = currAllResults.relative_equity_earnings.amount
+      smallStats[3] = {
+        ...smallStats[3],
+        value: Math.round(totalAmount * 100) / 100,
+        percentage:
+          Math.round(
+            currAllResults.relative_equity_earnings.percentage * 100 * 100
+          ) / 100,
+        increase: totalAmount > 0 ? 'increase' : 'decrease',
+        datasets: [
+          {
+            ...smallStats[3].datasets[0],
+            backgroundColor:
+              totalAmount > 0 ? 'rgba(23,198,113,0.1)' : 'rgba(255,65,105,0.1)',
+            borderColor:
+              totalAmount > 0 ? 'rgb(23,198,113)' : 'rgb(255,65,105)',
+          },
+        ],
       }
 
       // override day gain
@@ -140,25 +161,12 @@ const Holdings = ({
         increase: dayAmount > 0 ? 'increase' : 'decrease',
         datasets: [
           {
-            // ...smallStats[1].datasets[0],
+            ...smallStats[4].datasets[0],
             backgroundColor:
               dayAmount > 0 ? 'rgba(23,198,113,0.1)' : 'rgba(255,65,105,0.1)',
             borderColor: dayAmount > 0 ? 'rgb(23,198,113)' : 'rgb(255,65,105)',
           },
         ],
-      }
-      
-
-      // override net gain
-      const totalAmount = currAllResults.relative_equity_earnings.amount
-      smallStats[3] = {
-        ...smallStats[3],
-        value: Math.round(totalAmount * 100) / 100,
-        percentage:
-          Math.round(
-            currAllResults.relative_equity_earnings.percentage * 100 * 100
-          ) / 100,
-        increase: totalAmount > 0 ? 'increase' : 'decrease',
       }
     }
 
@@ -179,6 +187,7 @@ const Holdings = ({
     ))
   }
 
+  // todo move this to only update on account change
   const accountSmallStats = renderSmallStats()
 
   return (
@@ -219,9 +228,8 @@ const Holdings = ({
       </Row>
 
       {/* Portfolio Quick Look */}
-      <Row>{accountSmallStats.slice(0,3)}</Row>
-      <Row>{accountSmallStats.slice(3,6)}</Row>
-      
+      <Row>{accountSmallStats.slice(0, 3)}</Row>
+      <Row>{accountSmallStats.slice(3, 6)}</Row>
 
       <Row>
         {/* Account Overview */}
@@ -293,7 +301,6 @@ Holdings.defaultProps = {
     {
       label: 'Securities Value',
       value: '---',
-      percentage: '0.00',
       increase: 'neutral',
       chartLabels: [null, null, null, null, null, null, null],
       attrs: { md: '6', sm: '6' },
@@ -303,7 +310,7 @@ Holdings.defaultProps = {
           fill: 'start',
           borderWidth: 1.5,
           backgroundColor: 'rgb(0,184,216, 0.1)',
-          borderColor: 'rgb(23,198,113)',
+          borderColor: 'rgb(0,123,255)',
           data: [
             randNum(),
             randNum(),
@@ -319,7 +326,6 @@ Holdings.defaultProps = {
     {
       label: 'Total Account Value',
       value: '---',
-      percentage: '0.00',
       increase: 'neutral',
       chartLabels: [null, null, null, null, null, null, null],
       attrs: { md: '6', sm: '6' },
@@ -381,7 +387,7 @@ Holdings.defaultProps = {
           fill: 'start',
           borderWidth: 1.5,
           backgroundColor: 'rgb(0,184,216, 0.1)',
-          borderColor: 'rgb(23,198,113)',
+          borderColor: 'rgb(0,123,255)',
           data: [
             randNum(),
             randNum(),
@@ -393,8 +399,7 @@ Holdings.defaultProps = {
           ],
         },
       ],
-    }
-
+    },
   ],
 }
 
