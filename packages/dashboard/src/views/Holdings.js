@@ -100,17 +100,38 @@ const Holdings = ({
 
       const currAllData = historicQuotes['all']
       const currAllResults = currAllData.results[currAllData.results.length - 1]
-
-      // override current balance
+    
+      // Override cash value (buying power)
       smallStats[0] = {
         ...smallStats[0],
+        value: Math.round(selectedAccount.buying_power.amount * 100) / 100
+      }
+
+      // Override securities value
+
+      const positions = selectedAccount.positions
+    
+      let initialValue = 0
+      let securitesValue = positions.reduce(function (accumulator, currentValue) {
+          return accumulator + currentValue.todays_earnings_baseline_value.amount;
+      }, initialValue)
+
+      
+      smallStats[1] = {
+        ...smallStats[1],
+        value: Math.round(securitesValue * 100) / 100
+      }
+
+      // override current balance
+      smallStats[2] = {
+        ...smallStats[2],
         value: Math.round(currDayResults.value.amount * 100) / 100,
       }
 
       // override day gain
       const dayAmount = currDayResults.relative_equity_earnings.amount
-      smallStats[1] = {
-        ...smallStats[1],
+      smallStats[4] = {
+        ...smallStats[4],
         value: Math.round(dayAmount * 100) / 100,
         percentage:
           Math.round(
@@ -126,12 +147,12 @@ const Holdings = ({
           },
         ],
       }
-      console.log(smallStats[1])
+      
 
       // override net gain
       const totalAmount = currAllResults.relative_equity_earnings.amount
-      smallStats[2] = {
-        ...smallStats[2],
+      smallStats[3] = {
+        ...smallStats[3],
         value: Math.round(totalAmount * 100) / 100,
         percentage:
           Math.round(
@@ -198,7 +219,9 @@ const Holdings = ({
       </Row>
 
       {/* Portfolio Quick Look */}
-      <Row>{accountSmallStats}</Row>
+      <Row>{accountSmallStats.slice(0,3)}</Row>
+      <Row>{accountSmallStats.slice(3,6)}</Row>
+      
 
       <Row>
         {/* Account Overview */}
@@ -243,8 +266,86 @@ const randNum = () => Math.random() * (7 - 2) + 2
 Holdings.defaultProps = {
   smallStats: [
     {
-      label: 'Current Balance',
+      label: 'Cash Value',
       value: '---',
+      increase: 'neutral',
+      chartLabels: [null, null, null, null, null, null, null],
+      attrs: { md: '6', sm: '6' },
+      datasets: [
+        {
+          label: 'Today',
+          fill: 'start',
+          borderWidth: 1.5,
+          backgroundColor: 'rgb(0,184,216, 0.1)',
+          borderColor: 'rgb(0,123,255)',
+          data: [
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+          ],
+        },
+      ],
+    },
+    {
+      label: 'Securities Value',
+      value: '---',
+      percentage: '0.00',
+      increase: 'neutral',
+      chartLabels: [null, null, null, null, null, null, null],
+      attrs: { md: '6', sm: '6' },
+      datasets: [
+        {
+          label: 'Today',
+          fill: 'start',
+          borderWidth: 1.5,
+          backgroundColor: 'rgb(0,184,216, 0.1)',
+          borderColor: 'rgb(23,198,113)',
+          data: [
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+          ],
+        },
+      ],
+    },
+    {
+      label: 'Total Account Value',
+      value: '---',
+      percentage: '0.00',
+      increase: 'neutral',
+      chartLabels: [null, null, null, null, null, null, null],
+      attrs: { md: '6', sm: '6' },
+      datasets: [
+        {
+          label: 'Today',
+          fill: 'start',
+          borderWidth: 1.5,
+          backgroundColor: 'rgb(0,184,216, 0.1)',
+          borderColor: 'rgb(0,123,255)',
+          data: [
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+            randNum(),
+          ],
+        },
+      ],
+    },
+    {
+      label: 'Net Gain',
+      value: '---',
+      percentage: '0.00',
       increase: 'neutral',
       chartLabels: [null, null, null, null, null, null, null],
       attrs: { md: '6', sm: '6' },
@@ -292,33 +393,8 @@ Holdings.defaultProps = {
           ],
         },
       ],
-    },
-    {
-      label: 'Net Gain',
-      value: '---',
-      percentage: '0.00',
-      increase: 'neutral',
-      chartLabels: [null, null, null, null, null, null, null],
-      attrs: { md: '6', sm: '6' },
-      datasets: [
-        {
-          label: 'Today',
-          fill: 'start',
-          borderWidth: 1.5,
-          backgroundColor: 'rgb(0,184,216, 0.1)',
-          borderColor: 'rgb(0,123,255)',
-          data: [
-            randNum(),
-            randNum(),
-            randNum(),
-            randNum(),
-            randNum(),
-            randNum(),
-            randNum(),
-          ],
-        },
-      ],
-    },
+    }
+
   ],
 }
 
