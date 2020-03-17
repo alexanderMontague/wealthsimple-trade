@@ -11,7 +11,8 @@ import {
   CardFooter,
 } from 'shards-react'
 
-import RangeDatePicker from './common/RangeDatePicker'
+import { tradeActions } from '../redux/actions'
+
 import Chart from '../utils/chart'
 
 class AccountOverview extends React.Component {
@@ -22,6 +23,7 @@ class AccountOverview extends React.Component {
 
     this.state = {
       selectedRange: '1d',
+      selectedRangeData: [],
     }
 
     this.portfolioRanges = ['1d', '1w', '1m', '3m', '1y', 'All']
@@ -101,7 +103,17 @@ class AccountOverview extends React.Component {
   }
 
   selectRange = event => {
+    const { selectedAccount, getHistory, user } = this.props
     const selectedRange = event.target.value
+
+    // return if no account is selected yet
+    if (!selectedAccount) return
+    getHistory({
+      times: [selectedRange.toLowerCase()],
+      account: selectedAccount.value,
+      tokens: JSON.stringify(user.tokens),
+    })
+
     this.setState({ selectedRange })
   }
 
@@ -124,12 +136,17 @@ class AccountOverview extends React.Component {
     ))
 
   render() {
-    const { account } = this.props
+    const { selectedAccount, historicQuotes } = this.props
+    console.log(historicQuotes)
 
     return (
       <Card small className="h-100">
         <CardHeader className="border-bottom">
-          <h6 className="m-0">{account ? `${account.display} Account Details` : "Select an Account"}</h6>
+          <h6 className="m-0">
+            {selectedAccount
+              ? `${selectedAccount.display} Account Details`
+              : 'Select an Account'}
+          </h6>
         </CardHeader>
         <CardBody className="pt-0">
           <canvas
@@ -208,57 +225,18 @@ AccountOverview.defaultProps = {
         pointRadius: 0,
         pointHoverRadius: 3,
       },
-      {
-        label: 'Past Month',
-        fill: 'start',
-        data: [
-          380,
-          430,
-          120,
-          230,
-          410,
-          740,
-          472,
-          219,
-          391,
-          229,
-          400,
-          203,
-          301,
-          380,
-          291,
-          620,
-          700,
-          300,
-          630,
-          402,
-          320,
-          380,
-          289,
-          410,
-          300,
-          530,
-          630,
-          720,
-          780,
-          1200,
-        ],
-        backgroundColor: 'rgba(255,65,105,0.1)',
-        borderColor: 'rgba(255,65,105,1)',
-        pointBackgroundColor: '#ffffff',
-        pointHoverBackgroundColor: 'rgba(255,65,105,1)',
-        borderDash: [3, 3],
-        borderWidth: 1,
-        pointRadius: 0,
-        pointHoverRadius: 2,
-        pointBorderColor: 'rgba(255,65,105,1)',
-      },
     ],
   },
 }
 
 const mapStateToProps = state => ({
-  account: state.trade.selectedAccount,
+  user: state.auth.user,
+  selectedAccount: state.trade.selectedAccount,
+  historicQuotes: state.trade.historicQuotes,
 })
 
-export default connect(mapStateToProps)(AccountOverview)
+const mapDispatchToProps = {
+  getHistory: tradeActions.getHistoricalQuotes,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AccountOverview)

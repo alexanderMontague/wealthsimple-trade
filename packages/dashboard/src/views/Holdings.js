@@ -5,7 +5,6 @@ import PropTypes from 'prop-types'
 import { tradeActions } from '../redux/actions'
 
 import { getFormattedAccount } from '../utils/helpers'
-import { getHistory } from '../utils/requests'
 
 import {
   Container,
@@ -283,7 +282,7 @@ const Holdings = ({
       <Row>
         {/* Account Overview */}
         <Col lg="9" md="12" sm="12" className="mb-4">
-          <AccountOverview />
+          <AccountOverview account={selectedAccount} />
         </Col>
         {/* Users by Device */}
         <Col lg="3" md="12" sm="12" className="mb-4">
