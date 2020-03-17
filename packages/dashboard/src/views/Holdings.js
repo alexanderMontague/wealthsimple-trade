@@ -100,25 +100,28 @@ const Holdings = ({
 
       const currAllData = historicQuotes['all']
       const currAllResults = currAllData.results[currAllData.results.length - 1]
-
+    
       // Override cash value (buying power)
       smallStats[0] = {
         ...smallStats[0],
-        value: Math.round(accounts["non-registered-ijzmubrj"].buying_power.amount * 100) / 100
+        value: Math.round(selectedAccount.buying_power.amount * 100) / 100
       }
 
       // Override securities value
 
-      const positions = accounts["non-registered-ijzmubrj"].positions
-      let securitesValue = 0
-      for (let i=0; i < positions.length; i++) {
-        securitesValue += positions[i].todays_earnings_baseline_value.amount     
-      }
+      const positions = selectedAccount.positions
+    
+      let initialValue = 0
+      let securitesValue = positions.reduce(function (accumulator, currentValue) {
+          return accumulator + currentValue.todays_earnings_baseline_value.amount;
+      }, initialValue)
+
+      
       smallStats[1] = {
         ...smallStats[1],
         value: Math.round(securitesValue * 100) / 100
       }
-      
+
       // override current balance
       smallStats[2] = {
         ...smallStats[2],
