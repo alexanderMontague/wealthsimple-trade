@@ -13,7 +13,19 @@ class SmallStats extends React.Component {
     this.canvasRef = React.createRef()
   }
 
+  componentDidUpdate(prevProps) {
+    // when a card gets a new value, render the entire chart
+    if (prevProps.value !== this.props.value) {
+      this.renderChart()
+    }
+  }
+
   componentDidMount() {
+    // render charts on mount
+    this.renderChart()
+  }
+
+  renderChart = () => {
     const chartOptions = {
       ...{
         maintainAspectRatio: true,
