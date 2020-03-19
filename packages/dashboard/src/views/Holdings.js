@@ -205,10 +205,10 @@ const Holdings = ({
           <tr key={position.id}>
             <td>{position.stock.symbol}</td>
             <td>{position.quantity}</td>
-            <td>{"$" + (position.book_value.amount / position.quantity).toFixed(3)}</td>
-            <td>{position.quote.amount}</td>
-            <td>{(position.quote.amount * position.quantity).toFixed(2)}</td>
-            <td>{((position.quote.amount * position.quantity) - position.book_value.amount).toFixed(2)}</td>
+            <td>{"$" + (position.book_value.amount / position.quantity).toFixed(2)}</td>
+            <td>{"$" + position.quote.amount}</td>
+            <td>{"$" + (position.quote.amount * position.quantity).toFixed(2)}</td>
+            <td>{"$ " + ((position.quote.amount * position.quantity) - position.book_value.amount).toFixed(2)}</td>
             <td>{(((position.quote.amount * position.quantity) - position.book_value.amount) / position.book_value.amount * 100).toFixed(2) + "%"} </td>
             <td>{(position.quote.amount * position.quantity / portfolioValue * 100).toFixed(2) + "%"}</td>
           </tr>
