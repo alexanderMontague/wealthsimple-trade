@@ -1,15 +1,19 @@
 {
-    "name": "WST-desktop-client",
-    "author": "Alex Montague",
-    "private": true,
-    "scripts": {
-        "start": "lerna run start --stream",
-        "bootstrap": "lerna bootstrap --hoist",
-        "clean": "lerna clean",
-        "prettier": "prettier --write \"**/*.{ts,js,json}\""
-    },
-    "devDependencies": {
-        "lerna": "^3.20.2",
-        "prettier": "^1.19.1"
-    }
+  "name": "WST-desktop-client",
+  "author": "Alex Montague",
+  "private": true,
+  "scripts": {
+    "start": "lerna run start --stream",
+    "bootstrap": "lerna bootstrap --hoist",
+    "clean": "lerna clean",
+    "prettier": "prettier --write \"**/*.{ts,js,json}\""
+  },
+  "devDependencies": {
+    "lerna": "^3.20.2",
+    "prettier": "^1.19.1",
+    "chalk": "^2.4.1"
+  },
+  "dependencies": {
+    "moment": "^2.24.0"
+  }
 }

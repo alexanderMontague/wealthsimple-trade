@@ -24,12 +24,48 @@ class AccountOverview extends React.Component {
     this.state = {
       selectedRange: '1d',
       selectedRangeData: [],
+      portfolioRanges: ['1d', '1w', '1m', '3m', '1y', 'All'],
     }
-
-    this.portfolioRanges = ['1d', '1w', '1m', '3m', '1y', 'All']
   }
 
   componentDidMount() {
+    this.renderChart()
+  }
+
+  componentDidUpdate(prevProps, props) {
+    // if selected account hasnt changed, don't re-render chart
+    if (prevProps.selectedAccount?.value === props.selectedAccount?.value)
+      return
+
+    this.renderChart()
+  }
+
+  selectRange = event => {
+    const { selectedAccount, getHistory, user } = this.props
+    const selectedRange = event.target.value
+
+    // return if no account is selected yet
+    if (!selectedAccount) return
+    getHistory({
+      times: [selectedRange.toLowerCase()],
+      account: selectedAccount.value,
+      tokens: JSON.stringify(user.tokens),
+    })
+
+    this.setState({ selectedRange })
+  }
+
+  renderChart = () => {
+    const { selectedAccount, historicQuotes, chartData } = this.props
+    const { selectedRange } = this.state
+    const currHistoricData =
+      historicQuotes[selectedRange.toLowerCase()]?.results
+
+    console.log(currHistoricData)
+
+    // use default chart data first then override
+    const defaultData = { ...chartData }
+
     const chartOptions = {
       ...{
         responsive: true,
@@ -85,40 +121,15 @@ class AccountOverview extends React.Component {
       ...this.props.chartOptions,
     }
 
-    const BlogUsersOverview = new Chart(this.canvasRef.current, {
+    new Chart(this.canvasRef.current, {
       type: 'LineWithLine',
-      data: this.props.chartData,
+      data: defaultData,
       options: chartOptions,
     })
-
-    // They can still be triggered on hover.
-    const buoMeta = BlogUsersOverview.getDatasetMeta(0)
-    buoMeta.data[0]._model.radius = 0
-    buoMeta.data[
-      this.props.chartData.datasets[0].data.length - 1
-    ]._model.radius = 0
-
-    // Render the chart.
-    BlogUsersOverview.render()
-  }
-
-  selectRange = event => {
-    const { selectedAccount, getHistory, user } = this.props
-    const selectedRange = event.target.value
-
-    // return if no account is selected yet
-    if (!selectedAccount) return
-    getHistory({
-      times: [selectedRange.toLowerCase()],
-      account: selectedAccount.value,
-      tokens: JSON.stringify(user.tokens),
-    })
-
-    this.setState({ selectedRange })
   }
 
   renderButtonas = () =>
-    this.portfolioRanges.map(range => (
+    this.state.portfolioRanges.map(range => (
       <Button
         key={`${range}-button`}
         size="md"
@@ -137,7 +148,6 @@ class AccountOverview extends React.Component {
 
   render() {
     const { selectedAccount, historicQuotes } = this.props
-    console.log(historicQuotes)
 
     return (
       <Card small className="h-100">
@@ -183,7 +193,7 @@ AccountOverview.defaultProps = {
     labels: Array.from(new Array(30), (_, i) => (i === 0 ? 1 : i)),
     datasets: [
       {
-        label: 'Current Month',
+        label: 'Your Account',
         fill: 'start',
         data: [
           500,

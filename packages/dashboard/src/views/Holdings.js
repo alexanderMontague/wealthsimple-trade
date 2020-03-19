@@ -95,10 +95,11 @@ const Holdings = ({
     })
 
   const renderSmallStats = () => {
-    const smallStats = [...defaultSmallStats]
+    // make copy of default props then override if needed
+    const defaultSmallStats = [...smallStats]
 
     // if we have account overview data, override defaults
-    if (historicQuotes['1d'] && historicQuotes['all']) {
+    if (historicQuotes['1d'] && historicQuotes['all'] && selectedAccount) {
       const currDayData = historicQuotes['1d']
       const currDayResults = currDayData.results[currDayData.results.length - 1]
 
@@ -106,8 +107,8 @@ const Holdings = ({
       const currAllResults = currAllData.results[currAllData.results.length - 1]
 
       // Override cash value (buying power)
-      smallStats[0] = {
-        ...smallStats[0],
+      defaultSmallStats[0] = {
+        ...defaultSmallStats[0],
         value: Math.round(selectedAccount.buying_power.amount * 100) / 100,
       }
 
@@ -118,21 +119,21 @@ const Holdings = ({
           accumulator + currentValue.quote.amount * currentValue.quantity,
         0
       )
-      smallStats[1] = {
-        ...smallStats[1],
+      defaultSmallStats[1] = {
+        ...defaultSmallStats[1],
         value: Math.round(securitesValue * 100) / 100,
       }
 
       // override current balance
-      smallStats[2] = {
-        ...smallStats[2],
+      defaultSmallStats[2] = {
+        ...defaultSmallStats[2],
         value: Math.round(currDayResults.value.amount * 100) / 100,
       }
 
       // override net gain
       const totalAmount = currAllResults.relative_equity_earnings.amount
-      smallStats[3] = {
-        ...smallStats[3],
+      defaultSmallStats[3] = {
+        ...defaultSmallStats[3],
         value: Math.round(totalAmount * 100) / 100,
         percentage:
           Math.round(
@@ -141,7 +142,7 @@ const Holdings = ({
         increase: totalAmount > 0 ? 'increase' : 'decrease',
         datasets: [
           {
-            ...smallStats[3].datasets[0],
+            ...defaultSmallStats[3].datasets[0],
             backgroundColor:
               totalAmount > 0 ? 'rgba(23,198,113,0.1)' : 'rgba(255,65,105,0.1)',
             borderColor:
@@ -152,8 +153,8 @@ const Holdings = ({
 
       // override day gain
       const dayAmount = currDayResults.relative_equity_earnings.amount
-      smallStats[4] = {
-        ...smallStats[4],
+      defaultSmallStats[4] = {
+        ...defaultSmallStats[4],
         value: Math.round(dayAmount * 100) / 100,
         percentage:
           Math.round(
@@ -162,7 +163,7 @@ const Holdings = ({
         increase: dayAmount > 0 ? 'increase' : 'decrease',
         datasets: [
           {
-            ...smallStats[4].datasets[0],
+            ...defaultSmallStats[4].datasets[0],
             backgroundColor:
               dayAmount > 0 ? 'rgba(23,198,113,0.1)' : 'rgba(255,65,105,0.1)',
             borderColor: dayAmount > 0 ? 'rgb(23,198,113)' : 'rgb(255,65,105)',
@@ -171,7 +172,7 @@ const Holdings = ({
       }
     }
 
-    return smallStats.map((stats, idx) => (
+    return defaultSmallStats.map((stats, idx) => (
       <Col className="col-lg mb-4" key={idx} {...stats.attrs}>
         <SmallStats
           id={`small-stats-${idx}`}
