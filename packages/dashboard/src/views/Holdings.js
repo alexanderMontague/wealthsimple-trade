@@ -117,7 +117,7 @@ const Holdings = ({
       const positions = selectedAccount.positions
       const securitesValue = positions.reduce(
         (accumulator, currentValue) =>
-          accumulator + (currentValue.quote.amount) * currentValue.quantity,
+          accumulator + currentValue.quote.amount * currentValue.quantity,
         0
       )
       smallStats[1] = {
@@ -200,18 +200,40 @@ const Holdings = ({
       const currDayData = historicQuotes['1d']
       const currDayResults = currDayData.results[currDayData.results.length - 1]
       const portfolioValue = currDayResults.value.amount
-      
-      return positions.map((position) => (
-          <tr key={position.id}>
-            <td>{position.stock.symbol}</td>
-            <td>{position.quantity}</td>
-            <td>{"$" + (position.book_value.amount / position.quantity).toFixed(2)}</td>
-            <td>{"$" + position.quote.amount}</td>
-            <td>{"$" + (position.quote.amount * position.quantity).toFixed(2)}</td>
-            <td>{"$ " + ((position.quote.amount * position.quantity) - position.book_value.amount).toFixed(2)}</td>
-            <td>{(((position.quote.amount * position.quantity) - position.book_value.amount) / position.book_value.amount * 100).toFixed(2) + "%"} </td>
-            <td>{(position.quote.amount * position.quantity / portfolioValue * 100).toFixed(2) + "%"}</td>
-          </tr>
+
+      return positions.map(position => (
+        <tr key={position.id}>
+          <td>{position.stock.symbol}</td>
+          <td>{position.quantity}</td>
+          <td>
+            {'$' + (position.book_value.amount / position.quantity).toFixed(2)}
+          </td>
+          <td>{'$' + position.quote.amount}</td>
+          <td>
+            {'$' + (position.quote.amount * position.quantity).toFixed(2)}
+          </td>
+          <td>
+            {'$ ' +
+              (
+                position.quote.amount * position.quantity -
+                position.book_value.amount
+              ).toFixed(2)}
+          </td>
+          <td>
+            {(
+              ((position.quote.amount * position.quantity -
+                position.book_value.amount) /
+                position.book_value.amount) *
+              100
+            ).toFixed(2) + '%'}{' '}
+          </td>
+          <td>
+            {(
+              ((position.quote.amount * position.quantity) / portfolioValue) *
+              100
+            ).toFixed(2) + '%'}
+          </td>
+        </tr>
       ))
     }
   }
