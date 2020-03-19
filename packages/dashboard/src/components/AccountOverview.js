@@ -61,8 +61,6 @@ class AccountOverview extends React.Component {
     const currHistoricData =
       historicQuotes[selectedRange.toLowerCase()]?.results
 
-    console.log(currHistoricData)
-
     // use default chart data first then override
     const defaultData = { ...chartData }
 
