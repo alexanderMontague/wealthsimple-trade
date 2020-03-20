@@ -16,6 +16,9 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Card,
+  CardHeader,
+  CardBody,
 } from 'shards-react'
 
 import AccountOverview from '../components/AccountOverview'
@@ -114,7 +117,7 @@ const Holdings = ({
       const positions = selectedAccount.positions
       const securitesValue = positions.reduce(
         (accumulator, currentValue) =>
-          accumulator + currentValue.todays_earnings_baseline_value.amount,
+          accumulator + currentValue.quote.amount * currentValue.quantity,
         0
       )
       smallStats[1] = {
@@ -190,6 +193,53 @@ const Holdings = ({
   // todo move this to only update on account change
   const accountSmallStats = renderSmallStats()
 
+  const renderTableData = () => {
+    // check if we have account  data
+    if (historicQuotes['1d'] && historicQuotes['all']) {
+      const positions = selectedAccount.positions
+      const currDayData = historicQuotes['1d']
+      const currDayResults = currDayData.results[currDayData.results.length - 1]
+      const portfolioValue = currDayResults.value.amount
+
+      return positions.map(position => (
+        <tr key={position.id}>
+          <td>{position.stock.symbol}</td>
+          <td>{position.quantity}</td>
+          <td>
+            {'$' + (position.book_value.amount / position.quantity).toFixed(2)}
+          </td>
+          <td>{'$' + position.quote.amount}</td>
+          <td>
+            {'$' + (position.quote.amount * position.quantity).toFixed(2)}
+          </td>
+          <td>
+            {'$ ' +
+              (
+                position.quote.amount * position.quantity -
+                position.book_value.amount
+              ).toFixed(2)}
+          </td>
+          <td>
+            {(
+              ((position.quote.amount * position.quantity -
+                position.book_value.amount) /
+                position.book_value.amount) *
+              100
+            ).toFixed(2) + '%'}{' '}
+          </td>
+          <td>
+            {(
+              ((position.quote.amount * position.quantity) / portfolioValue) *
+              100
+            ).toFixed(2) + '%'}
+          </td>
+        </tr>
+      ))
+    }
+  }
+
+  const accountTableData = renderTableData()
+
   return (
     <Container fluid className="main-content-container px-4">
       <Row noGutters className="page-header py-4">
@@ -243,19 +293,45 @@ const Holdings = ({
       </Row>
 
       <Row>
-        {/* New Draft */}
-        <Col lg="4" md="6" sm="12" className="mb-4">
-          <NewDraft />
-        </Col>
-
-        {/* Discussions */}
-        <Col lg="5" md="12" sm="12" className="mb-4">
-          <Discussions />
-        </Col>
-
-        {/* Top Referrals */}
-        <Col lg="3" md="12" sm="12" className="mb-4">
-          <TopReferrals />
+        <Col>
+          <Card small className="mb-4 overflow-hidden">
+            <CardHeader className="border-bottom">
+              <h6 className="m-0">Investments</h6>
+            </CardHeader>
+            <CardBody className="p-0 pb-3">
+              <table className="table mb-0">
+                <thead className="bg-light">
+                  <tr>
+                    <th scope="col" className="border-0">
+                      Symbol
+                    </th>
+                    <th scope="col" className="border-0">
+                      Quantity
+                    </th>
+                    <th scope="col" className="border-0">
+                      Average Cost
+                    </th>
+                    <th scope="col" className="border-0">
+                      Current Price
+                    </th>
+                    <th scope="col" className="border-0">
+                      Market Value
+                    </th>
+                    <th scope="col" className="border-0">
+                      Unrealized G/L
+                    </th>
+                    <th scope="col" className="border-0">
+                      Unrealized G/L %
+                    </th>
+                    <th scope="col" className="border-0">
+                      Portfolio %
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>{accountTableData}</tbody>
+              </table>
+            </CardBody>
+          </Card>
         </Col>
       </Row>
     </Container>
