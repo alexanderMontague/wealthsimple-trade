@@ -41,7 +41,7 @@ const Holdings = ({
   })
   const [selectedAccount, setSelectedAccount] = useState(null)
   const [alertData, setAlertData] = useState({
-    isOpen: false,
+    isShowing: false,
     message: '',
   })
 
@@ -112,15 +112,15 @@ const Holdings = ({
       const currAllResults = currAllData.results[currAllData.results.length - 1]
 
       // if markets just opened and we don't have data yet
-      if (currDayData.length === 0 && alertData.isOpen === false) {
+      if (currDayData.length === 0 && alertData.isShowing === false) {
         setAlertData({
-          isOpen: true,
+          isShowing: true,
           message:
             'Markets have just opened. WST quotes are 15 minutes behind. Check back soon!',
         })
-      } else if (currDayData.length !== 0 && alertData.isOpen === true) {
+      } else if (currDayData.length !== 0 && alertData.isShowing === true) {
         setAlertData({
-          isOpen: false,
+          isShowing: false,
           message: '',
         })
       }
@@ -260,7 +260,7 @@ const Holdings = ({
 
   return (
     <>
-      {alertData.isOpen && (
+      {alertData.isShowing && (
         <Container fluid className="px-0">
           <Alert className="mb-0 alert-warning">
             <i className="fa fa-info mx-2"></i> {alertData.message}
