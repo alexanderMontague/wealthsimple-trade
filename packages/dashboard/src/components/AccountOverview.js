@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import moment from 'moment'
 import PropTypes from 'prop-types'
 import {
   Row,
@@ -20,6 +21,7 @@ class AccountOverview extends React.Component {
     super(props)
 
     this.canvasRef = React.createRef()
+    this.chartRef = null
 
     this.state = {
       selectedRange: '1d',
@@ -56,13 +58,38 @@ class AccountOverview extends React.Component {
   }
 
   renderChart = () => {
-    const { selectedAccount, historicQuotes, chartData } = this.props
+    const { selectedAccount, historicQuotes, chartData, accounts } = this.props
     const { selectedRange } = this.state
+    const selectedAccountData = accounts[selectedAccount?.value]
     const currHistoricData =
       historicQuotes[selectedRange.toLowerCase()]?.results
 
-    // use default chart data first then override
-    const defaultData = { ...chartData }
+    // if the user selected a new range and we have data for it
+    if (currHistoricData) {
+      // get values
+      const mainLabel = `${selectedAccount.display} Account (${selectedAccountData.base_currency})`
+      const dataPoints = currHistoricData.map(point => point.value.amount)
+      const labels = currHistoricData.map(point =>
+        moment
+          .utc(point.date)
+          .local()
+          .format('MMM DD, YYYY h:mm A')
+      )
+
+      // override default data
+      chartData.labels = labels
+      chartData.datasets = [
+        {
+          ...chartData.datasets[0],
+          label: mainLabel,
+          data: dataPoints,
+        },
+      ]
+    }
+
+    // to prevent chart re-render
+    // if we don't have data but default chart has already been rendered
+    if (!currHistoricData && this.chartRef) return
 
     const chartOptions = {
       ...{
@@ -84,9 +111,9 @@ class AccountOverview extends React.Component {
             {
               gridLines: false,
               ticks: {
-                callback(tick, index) {
-                  // Jump every 7 values on the X axis labels to avoid clutter.
-                  return index % 7 !== 0 ? '' : tick
+                // keep label data, but don't render them on axis
+                callback() {
+                  return ''
                 },
               },
             },
@@ -94,13 +121,9 @@ class AccountOverview extends React.Component {
           yAxes: [
             {
               ticks: {
-                suggestedMax: 45,
                 callback(tick) {
-                  if (tick === 0) {
-                    return tick
-                  }
-                  // Format the amounts using Ks for thousands.
-                  return tick > 999 ? `${(tick / 1000).toFixed(1)}K` : tick
+                  // format the amounts to show dollars
+                  return `$${tick}`
                 },
               },
             },
@@ -119,14 +142,19 @@ class AccountOverview extends React.Component {
       ...this.props.chartOptions,
     }
 
-    new Chart(this.canvasRef.current, {
+    // remove old chart
+    if (this.chartRef) {
+      this.chartRef.destroy()
+    }
+
+    this.chartRef = new Chart(this.canvasRef.current, {
       type: 'LineWithLine',
-      data: defaultData,
+      data: chartData,
       options: chartOptions,
     })
   }
 
-  renderButtonas = () =>
+  renderButtons = () =>
     this.state.portfolioRanges.map(range => (
       <Button
         key={`${range}-button`}
@@ -164,7 +192,7 @@ class AccountOverview extends React.Component {
           />
         </CardBody>
         <CardFooter className="d-flex justify-content-around">
-          {this.renderButtonas()}
+          {this.renderButtons()}
         </CardFooter>
       </Card>
     )
@@ -240,6 +268,7 @@ AccountOverview.defaultProps = {
 const mapStateToProps = state => ({
   user: state.auth.user,
   selectedAccount: state.trade.selectedAccount,
+  accounts: state.trade.accounts,
   historicQuotes: state.trade.historicQuotes,
 })
 
