@@ -18,34 +18,113 @@ class AccountBreakdown extends React.Component {
   constructor(props) {
     super(props)
 
+    this.chartRef = null
     this.canvasRef = React.createRef()
   }
 
   componentDidMount() {
+    this.renderChart()
+  }
+
+  componentDidUpdate(prevProps, props) {
+    // if selected account has changed re-render chart
+    this.renderChart()
+  }
+
+  renderChart = () => {
+    const {
+      selectedAccount,
+      chartData: defaultChartData,
+      accounts,
+      historicQuotes,
+    } = this.props
+    const currDayData = historicQuotes['1d']
+    const chartData = { ...defaultChartData }
+
+    // if the user selected a new range and we have data for it
+    if (currDayData) {
+      // get data from portfolio
+      const currDayResults = currDayData.results[currDayData.results.length - 1]
+      const portfolioValue = currDayResults.value.amount
+      const selectedAccountData = accounts[selectedAccount?.value]
+      const positions = selectedAccountData?.positions
+
+      // get option worth percentage
+      const dataPoints = positions.map(point =>
+        Number(
+          (
+            ((point.quote.amount * point.quantity) / portfolioValue) *
+            100
+          ).toFixed(2)
+        )
+      )
+      // push in cash percentage
+      dataPoints.push(
+        Number(
+          (
+            (selectedAccountData.current_balance.amount / portfolioValue) *
+            100
+          ).toFixed(2)
+        )
+      )
+
+      // option labels with name and ticker
+      const labels = positions.map(
+        position => `${position.stock.name} (${position.stock.symbol})`
+      )
+      // push in cash label
+      labels.push('Cash')
+
+      // create colors for each security
+      const colors = labels.map((_, i) => chartColors[i])
+
+      // override default data
+      chartData.labels = labels
+      chartData.datasets = [
+        {
+          ...chartData.datasets[0],
+          data: dataPoints,
+          backgroundColor: colors,
+        },
+      ]
+    }
+
+    // to prevent chart re-render
+    // if we don't have data but default chart has already been rendered
+    if (!currDayData && this.chartRef) return
+
     const chartConfig = {
       type: 'pie',
-      data: this.props.chartData,
+      data: chartData,
       options: {
-        ...{
-          legend: {
-            position: 'bottom',
-            labels: {
-              padding: 25,
-              boxWidth: 20,
-            },
-          },
-          cutoutPercentage: 0,
-          tooltips: {
-            custom: false,
-            mode: 'index',
-            position: 'nearest',
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 10,
+            boxWidth: 20,
           },
         },
-        ...this.props.chartOptions,
+        cutoutPercentage: 0,
+        tooltips: {
+          custom: false,
+          mode: 'index',
+          position: 'nearest',
+          callbacks: {
+            label: function(item, data) {
+              const dataIndex = item.index
+              return `${data.labels[dataIndex]} ${data.datasets[0].data[dataIndex]}%`
+            },
+          },
+        },
       },
     }
 
-    new Chart(this.canvasRef.current, chartConfig)
+    // remove old chart
+    if (this.chartRef) {
+      this.chartRef.destroy()
+    }
+
+    this.chartRef = new Chart(this.canvasRef.current, chartConfig)
   }
 
   render() {
@@ -57,32 +136,11 @@ class AccountBreakdown extends React.Component {
         </CardHeader>
         <CardBody className="d-flex py-0">
           <canvas
-            height="220"
+            height="350"
             ref={this.canvasRef}
             className="blog-users-by-device m-auto"
           />
         </CardBody>
-        <CardFooter className="border-top">
-          <Row>
-            <Col>
-              <FormSelect
-                size="sm"
-                value="last-week"
-                style={{ maxWidth: '130px' }}
-                onChange={() => {}}
-              >
-                <option value="last-week">Last Week</option>
-                <option value="today">Today</option>
-                <option value="last-month">Last Month</option>
-                <option value="last-year">Last Year</option>
-              </FormSelect>
-            </Col>
-            <Col className="text-right view-report">
-              {/* eslint-disable-next-line */}
-              <a href="#">View full report &rarr;</a>
-            </Col>
-          </Row>
-        </CardFooter>
       </Card>
     )
   }
@@ -98,30 +156,22 @@ AccountBreakdown.propTypes = {
    */
   chartConfig: PropTypes.object,
   /**
-   * The Chart.js options.
-   */
-  chartOptions: PropTypes.object,
-  /**
    * The chart data.
    */
   chartData: PropTypes.object,
 }
 
 AccountBreakdown.defaultProps = {
-  title: 'Asset Breakdown',
+  title: 'Asset Value Breakdown',
   chartData: {
     datasets: [
       {
         hoverBorderColor: '#ffffff',
-        data: [68.3, 24.2, 7.5],
-        backgroundColor: [
-          'rgba(0,123,255,0.9)',
-          'rgba(0,123,255,0.5)',
-          'rgba(0,123,255,0.3)',
-        ],
+        data: [68.3, 31.7],
+        backgroundColor: [chartColors[2], chartColors[4]],
       },
     ],
-    labels: ['Desktop', 'Tablet', 'Mobile'],
+    labels: ['Cash', 'Securities'],
   },
 }
 
