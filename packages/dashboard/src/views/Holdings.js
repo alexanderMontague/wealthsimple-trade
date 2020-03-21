@@ -26,12 +26,9 @@ import AccountBreakdown from '../components/AccountBreakdown'
 
 import PageTitle from '../components/common/PageTitle'
 import SmallStats from '../components/common/SmallStats'
-import NewDraft from '../components/blog/NewDraft'
-import Discussions from '../components/blog/Discussions'
-import TopReferrals from '../components/common/TopReferrals'
 
 const Holdings = ({
-  smallStats,
+  smallStats: defaultSmallStats,
   selectAccount,
   accounts,
   getHistory,
@@ -99,6 +96,8 @@ const Holdings = ({
     })
 
   const renderSmallStats = () => {
+    const smallStats = [...defaultSmallStats]
+
     // if we have account overview data, override defaults
     if (historicQuotes['1d'] && historicQuotes['all']) {
       const currDayData = historicQuotes['1d']
