@@ -34,6 +34,7 @@ const Holdings = ({
   getHistory,
   user,
   historicQuotes,
+  globalSelectedAccount,
 }) => {
   const [dropdownState, setDropdownState] = useState({
     isOpen: false,
@@ -44,6 +45,22 @@ const Holdings = ({
     isShowing: false,
     message: '',
   })
+
+  useEffect(() => {
+    // on load set dropdown and current account state from redux
+    if (globalSelectedAccount) {
+      setDropdownState({
+        isOpen: false,
+        selected: globalSelectedAccount,
+      })
+      setSelectedAccount({
+        ...accounts[globalSelectedAccount.value],
+        value: globalSelectedAccount.value,
+      })
+    }
+
+    return () => {}
+  }, [])
 
   useEffect(() => {
     // fetch 1d stats for account overview on account switch
@@ -213,7 +230,7 @@ const Holdings = ({
 
   const renderTableData = () => {
     // check if we have account  data
-    if (historicQuotes['1d'] && historicQuotes['all']) {
+    if (historicQuotes['1d'] && historicQuotes['all'] && selectedAccount) {
       const positions = selectedAccount.positions
       const currDayData = historicQuotes['1d']
       const currDayResults = currDayData.results[currDayData.results.length - 1]
@@ -510,6 +527,7 @@ const mapStateToProps = state => ({
   accounts: state.trade.accounts,
   user: state.auth.user,
   historicQuotes: state.trade.historicQuotes,
+  globalSelectedAccount: state.trade.selectedAccount,
 })
 
 const mapDispatchToProps = {
