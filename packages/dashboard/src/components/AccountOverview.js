@@ -34,12 +34,10 @@ class AccountOverview extends React.Component {
     this.renderChart()
   }
 
-  componentDidUpdate(prevProps, props) {
-    // if selected account hasnt changed, don't re-render chart
-    if (prevProps.selectedAccount?.value === props.selectedAccount?.value)
-      return
-
-    this.renderChart()
+  componentDidUpdate(prevProps, state) {
+    // if quotes have not changed, don't re-render chart
+    if (prevProps.historicQuotes !== this.props.historicQuotes)
+      this.renderChart()
   }
 
   selectRange = event => {
@@ -64,6 +62,8 @@ class AccountOverview extends React.Component {
     const currHistoricData =
       historicQuotes[selectedRange.toLowerCase()]?.results
 
+    const chartDefaultData = { ...chartData }
+
     // if the user selected a new range and we have data for it
     if (currHistoricData) {
       // get values
@@ -77,10 +77,10 @@ class AccountOverview extends React.Component {
       )
 
       // override default data
-      chartData.labels = labels
-      chartData.datasets = [
+      chartDefaultData.labels = labels
+      chartDefaultData.datasets = [
         {
-          ...chartData.datasets[0],
+          ...chartDefaultData.datasets[0],
           label: mainLabel,
           data: dataPoints,
         },
@@ -149,7 +149,7 @@ class AccountOverview extends React.Component {
 
     this.chartRef = new Chart(this.canvasRef.current, {
       type: 'LineWithLine',
-      data: chartData,
+      data: chartDefaultData,
       options: chartOptions,
     })
   }

@@ -26,9 +26,14 @@ class AccountBreakdown extends React.Component {
     this.renderChart()
   }
 
-  componentDidUpdate(prevProps, props) {
-    // if selected account has changed re-render chart
-    this.renderChart()
+  componentDidUpdate(prevProps) {
+    // because we use 1d quotes to calculate portfolio value
+    // only re-render pie on deep unequality
+    if (
+      JSON.stringify(prevProps.historicQuotes['1d']) !==
+      JSON.stringify(this.props.historicQuotes['1d'])
+    )
+      this.renderChart()
   }
 
   renderChart = () => {
