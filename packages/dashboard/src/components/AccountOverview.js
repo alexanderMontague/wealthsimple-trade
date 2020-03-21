@@ -34,7 +34,7 @@ class AccountOverview extends React.Component {
     this.renderChart()
   }
 
-  componentDidUpdate(prevProps, state) {
+  componentDidUpdate(prevProps) {
     // if quotes have not changed, don't re-render chart
     if (prevProps.historicQuotes !== this.props.historicQuotes)
       this.renderChart()
