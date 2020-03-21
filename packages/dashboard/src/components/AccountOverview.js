@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import moment from 'moment'
 import PropTypes from 'prop-types'
 import {
   Row,
@@ -11,7 +12,8 @@ import {
   CardFooter,
 } from 'shards-react'
 
-import RangeDatePicker from './common/RangeDatePicker'
+import { tradeActions } from '../redux/actions'
+
 import Chart from '../utils/chart'
 
 class AccountOverview extends React.Component {
@@ -19,15 +21,76 @@ class AccountOverview extends React.Component {
     super(props)
 
     this.canvasRef = React.createRef()
+    this.chartRef = null
 
     this.state = {
       selectedRange: '1d',
+      selectedRangeData: [],
+      portfolioRanges: ['1d', '1w', '1m', '3m', '1y', 'All'],
     }
-
-    this.portfolioRanges = ['1d', '1w', '1m', '3m', '1y', 'All']
   }
 
   componentDidMount() {
+    this.renderChart()
+  }
+
+  componentDidUpdate(prevProps, props) {
+    // if selected account hasnt changed, don't re-render chart
+    if (prevProps.selectedAccount?.value === props.selectedAccount?.value)
+      return
+
+    this.renderChart()
+  }
+
+  selectRange = event => {
+    const { selectedAccount, getHistory, user } = this.props
+    const selectedRange = event.target.value
+
+    // return if no account is selected yet
+    if (!selectedAccount) return
+    getHistory({
+      times: [selectedRange.toLowerCase()],
+      account: selectedAccount.value,
+      tokens: JSON.stringify(user.tokens),
+    })
+
+    this.setState({ selectedRange })
+  }
+
+  renderChart = () => {
+    const { selectedAccount, historicQuotes, chartData, accounts } = this.props
+    const { selectedRange } = this.state
+    const selectedAccountData = accounts[selectedAccount?.value]
+    const currHistoricData =
+      historicQuotes[selectedRange.toLowerCase()]?.results
+
+    // if the user selected a new range and we have data for it
+    if (currHistoricData) {
+      // get values
+      const mainLabel = `${selectedAccount.display} Account (${selectedAccountData.base_currency})`
+      const dataPoints = currHistoricData.map(point => point.value.amount)
+      const labels = currHistoricData.map(point =>
+        moment
+          .utc(point.date)
+          .local()
+          .format('MMM DD, YYYY h:mm A')
+      )
+
+      // override default data
+      chartData.labels = labels
+      chartData.datasets = [
+        {
+          ...chartData.datasets[0],
+          label: mainLabel,
+          data: dataPoints,
+        },
+      ]
+    }
+
+    // to prevent chart re-render
+    // if we don't have data but default chart has already been rendered
+    if (!currHistoricData && this.chartRef) return
+
     const chartOptions = {
       ...{
         responsive: true,
@@ -48,9 +111,9 @@ class AccountOverview extends React.Component {
             {
               gridLines: false,
               ticks: {
-                callback(tick, index) {
-                  // Jump every 7 values on the X axis labels to avoid clutter.
-                  return index % 7 !== 0 ? '' : tick
+                // keep label data, but don't render them on axis
+                callback() {
+                  return ''
                 },
               },
             },
@@ -58,13 +121,9 @@ class AccountOverview extends React.Component {
           yAxes: [
             {
               ticks: {
-                suggestedMax: 45,
                 callback(tick) {
-                  if (tick === 0) {
-                    return tick
-                  }
-                  // Format the amounts using Ks for thousands.
-                  return tick > 999 ? `${(tick / 1000).toFixed(1)}K` : tick
+                  // format the amounts to show dollars
+                  return `$${tick}`
                 },
               },
             },
@@ -83,30 +142,20 @@ class AccountOverview extends React.Component {
       ...this.props.chartOptions,
     }
 
-    const BlogUsersOverview = new Chart(this.canvasRef.current, {
+    // remove old chart
+    if (this.chartRef) {
+      this.chartRef.destroy()
+    }
+
+    this.chartRef = new Chart(this.canvasRef.current, {
       type: 'LineWithLine',
-      data: this.props.chartData,
+      data: chartData,
       options: chartOptions,
     })
-
-    // They can still be triggered on hover.
-    const buoMeta = BlogUsersOverview.getDatasetMeta(0)
-    buoMeta.data[0]._model.radius = 0
-    buoMeta.data[
-      this.props.chartData.datasets[0].data.length - 1
-    ]._model.radius = 0
-
-    // Render the chart.
-    BlogUsersOverview.render()
   }
 
-  selectRange = event => {
-    const selectedRange = event.target.value
-    this.setState({ selectedRange })
-  }
-
-  renderButtonas = () =>
-    this.portfolioRanges.map(range => (
+  renderButtons = () =>
+    this.state.portfolioRanges.map(range => (
       <Button
         key={`${range}-button`}
         size="md"
@@ -124,12 +173,16 @@ class AccountOverview extends React.Component {
     ))
 
   render() {
-    const { account } = this.props
+    const { selectedAccount, historicQuotes } = this.props
 
     return (
       <Card small className="h-100">
         <CardHeader className="border-bottom">
-          <h6 className="m-0">{account ? `${account.display} Account Details` : "Select an Account"}</h6>
+          <h6 className="m-0">
+            {selectedAccount
+              ? `${selectedAccount.display} Account Details`
+              : 'Select an Account'}
+          </h6>
         </CardHeader>
         <CardBody className="pt-0">
           <canvas
@@ -139,7 +192,7 @@ class AccountOverview extends React.Component {
           />
         </CardBody>
         <CardFooter className="d-flex justify-content-around">
-          {this.renderButtonas()}
+          {this.renderButtons()}
         </CardFooter>
       </Card>
     )
@@ -166,7 +219,7 @@ AccountOverview.defaultProps = {
     labels: Array.from(new Array(30), (_, i) => (i === 0 ? 1 : i)),
     datasets: [
       {
-        label: 'Current Month',
+        label: 'Your Account',
         fill: 'start',
         data: [
           500,
@@ -208,57 +261,19 @@ AccountOverview.defaultProps = {
         pointRadius: 0,
         pointHoverRadius: 3,
       },
-      {
-        label: 'Past Month',
-        fill: 'start',
-        data: [
-          380,
-          430,
-          120,
-          230,
-          410,
-          740,
-          472,
-          219,
-          391,
-          229,
-          400,
-          203,
-          301,
-          380,
-          291,
-          620,
-          700,
-          300,
-          630,
-          402,
-          320,
-          380,
-          289,
-          410,
-          300,
-          530,
-          630,
-          720,
-          780,
-          1200,
-        ],
-        backgroundColor: 'rgba(255,65,105,0.1)',
-        borderColor: 'rgba(255,65,105,1)',
-        pointBackgroundColor: '#ffffff',
-        pointHoverBackgroundColor: 'rgba(255,65,105,1)',
-        borderDash: [3, 3],
-        borderWidth: 1,
-        pointRadius: 0,
-        pointHoverRadius: 2,
-        pointBorderColor: 'rgba(255,65,105,1)',
-      },
     ],
   },
 }
 
 const mapStateToProps = state => ({
-  account: state.trade.selectedAccount,
+  user: state.auth.user,
+  selectedAccount: state.trade.selectedAccount,
+  accounts: state.trade.accounts,
+  historicQuotes: state.trade.historicQuotes,
 })
 
-export default connect(mapStateToProps)(AccountOverview)
+const mapDispatchToProps = {
+  getHistory: tradeActions.getHistoricalQuotes,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AccountOverview)
