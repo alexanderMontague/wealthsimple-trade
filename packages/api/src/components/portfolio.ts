@@ -17,14 +17,14 @@ export async function getPortfolioData(tokens) {
       accounts[id].positions = []
     })
   } catch (error) {
-    return createResponse(200, getError(error), null, true)
+    return createResponse(400, getError(error), null, true)
   }
 
   // fetch position data for all accounts
   try {
     positions = (await WST_positions(tokens)).results
   } catch (error) {
-    return createResponse(200, getError(error), null, true)
+    return createResponse(400, getError(error), null, true)
   }
 
   positions.forEach(option => {

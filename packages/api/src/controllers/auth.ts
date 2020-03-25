@@ -1,4 +1,6 @@
 import { createResponse, getError } from '../helpers'
+import { Tokens } from '../helpers/types'
+
 import { WST_login, WST_status } from '../helpers/requests'
 
 import { getPortfolioData } from '../components/portfolio'
@@ -24,32 +26,28 @@ import { getPortfolioData } from '../components/portfolio'
  *   }
  */
 export async function getStatus(req, res, next) {
-  // get stringified tokens from header
-  const rawTokens = req.header('tokens')
-
-  if (rawTokens === 'null') {
-    return res.json(
-      createResponse(200, 'Auth token missing or expired', {}, true)
-    )
-  }
-
   let statusResponse
-  const tokens = JSON.parse(rawTokens)
+  const tokens: Tokens = req.tokens
 
   try {
     statusResponse = await WST_status(tokens)
   } catch (error) {
-    return res.json(createResponse(200, getError(error), {}, true))
+    return res.status(400).json(createResponse(400, getError(error), {}, true))
   }
 
   // get portfolio data
-  const portfolioData = await getPortfolioData(tokens)
+  const portfolioDataRes = <any>await getPortfolioData(tokens)
+
+  // if there was an error, return the created response
+  if (portfolioDataRes?.error) {
+    return res.status(400).json(portfolioDataRes)
+  }
 
   // merge data
   const accountInfo = {
     ...statusResponse,
     tokens,
-    portfolioData,
+    portfolioData: portfolioDataRes,
   }
 
   res.json(createResponse(200, 'Authenticated', accountInfo, false))
@@ -79,22 +77,24 @@ export async function login(req, res, next) {
   const credentials = { ...req.body }
 
   if (!credentials.email) {
-    return res.json(
-      createResponse(200, 'An email needs to be present', null, true)
-    )
+    return res
+      .status(422)
+      .json(createResponse(422, 'An email needs to be present', null, true))
   }
 
   if (!credentials.password) {
-    return res.json(
-      createResponse(200, 'A password needs to be present', null, true)
-    )
+    return res
+      .status(422)
+      .json(createResponse(422, 'A password needs to be present', null, true))
   }
 
   let loginResponse
   try {
     loginResponse = await WST_login(credentials)
   } catch (error) {
-    return res.json(createResponse(200, getError(error), null, true))
+    return res
+      .status(400)
+      .json(createResponse(400, getError(error), null, true))
   }
 
   // pull tokens out of headers to send back for future requests
@@ -103,7 +103,7 @@ export async function login(req, res, next) {
     refresh: loginResponse.headers['x-refresh-token'],
   }
 
-  // get portfolio data
+  // also get base portfolio data on login
   const portfolioData = await getPortfolioData(tokens)
 
   res.json(

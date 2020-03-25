@@ -19,25 +19,29 @@ const axiosLogger = require('axios-debug-log')
 
 const upload = multer({ dest: path.join(__dirname, 'uploads') })
 
+// middleware import
+const {
+  tokens: { checkTokens },
+} = require('./src/middleware')
+
 // Axios Logging
 axiosLogger({
-    request: (debug, config) =>
-        debug(
-            `[${config.method.toUpperCase()}] | ${
-                config.url
-            } | DATA: ${JSON.stringify(
-                config?.data
-            )} | HEADERS: ${JSON.stringify(config.headers)}`
-        ),
-    response: (debug, response) => {
-        const data = JSON.stringify(response?.data)
-        debug(`[RESPONSE] | DATA: ${data.substring(0, 300)}...`)
-    }
-        ,
-    error: (debug, error) =>
-        debug(
-            `[ERROR] | Message: ${error.message} | Reason: ${error.response?.data?.error}`
-        ),
+  request: (debug, config) =>
+    debug(
+      `[${config.method.toUpperCase()}] | ${
+        config.url
+      } | DATA: ${JSON.stringify(config?.data)} | HEADERS: ${JSON.stringify(
+        config.headers
+      )}`
+    ),
+  response: (debug, response) => {
+    const data = JSON.stringify(response?.data)
+    debug(`[RESPONSE] | DATA: ${data.substring(0, 300)}...`)
+  },
+  error: (debug, error) =>
+    debug(
+      `[ERROR] | Message: ${error.message} | Reason: ${error.response?.data?.error}`
+    ),
 })
 
 /**
@@ -56,23 +60,6 @@ const routes = require('./src/routes')
 const app = express()
 const BASE_URL = '/api/v1'
 
-const whitelist = [
-    'http://localhost:3333',
-    undefined, // Undefined for Postman
-]
-
-const corsOptions = {
-    origin: function(origin, callback) {
-        if (whitelist.indexOf(origin) !== -1) {
-            callback(null, true)
-        } else {
-            callback(new Error('You are not whitelisted'))
-        }
-    },
-    preflightContinue: true,
-    credentials: true,
-}
-
 /**
  * Express configuration.
  */
@@ -84,51 +71,56 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(expressValidator())
 app.use(
-    session({
-        resave: true,
-        saveUninitialized: true,
-        secret: process.env.SESSION_SECRET,
-        cookie: { maxAge: 3.6e6, httpOnly: false, secure: false }, // expires after 1 hour
-    })
+  session({
+    resave: true,
+    saveUninitialized: true,
+    secret: process.env.SESSION_SECRET,
+    cookie: { maxAge: 3.6e6, httpOnly: false, secure: false }, // expires after 1 hour
+  })
 )
 app.use(flash())
-// app.use(cors(corsOptions))
 app.disable('x-powered-by')
 
 app.use((req, res, next) => {
-    // Refresh user cookie with every request
-    req.session._garbage = Date()
-    req.session.touch()
-    next()
+  // Refresh user cookie with every request
+  req.session._garbage = Date()
+  req.session.touch()
+  next()
 })
 
+// cors middleware
+app.use(cors())
+
+// set token middleware
+app.use(checkTokens)
+
 // set routes
-app.use(BASE_URL, cors(corsOptions), routes)
+app.use(BASE_URL, routes)
 
 /**
  * Error Handler.
  */
 if (process.env.NODE_ENV === 'development') {
-    // only use in development
-    app.use(errorHandler())
+  // only use in development
+  app.use(errorHandler())
 } else {
-    app.use((err, req, res, next) => {
-        console.error(err)
-        res.status(500).send('Server Error')
-    })
+  app.use((err, req, res, next) => {
+    console.error(err)
+    res.status(500).send('Server Error')
+  })
 }
 
 /**
  * Start Express server.
  */
 app.listen(app.get('port'), () => {
-    console.log(
-        '%s App is running at http://localhost:%d in %s mode',
-        chalk.green('✓'),
-        app.get('port'),
-        app.get('env')
-    )
-    console.log('Press CTRL-C to stop\n')
+  console.log(
+    '%s App is running at http://localhost:%d in %s mode',
+    chalk.green('✓'),
+    app.get('port'),
+    app.get('env')
+  )
+  console.log('Press CTRL-C to stop\n')
 })
 
 module.exports = app
