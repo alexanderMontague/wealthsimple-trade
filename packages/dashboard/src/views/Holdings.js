@@ -129,7 +129,10 @@ const Holdings = ({
       const currAllResults = currAllData.results[currAllData.results.length - 1]
 
       // if markets just opened and we don't have data yet
-      if (currDayData.length === 0 && alertData.isShowing === false) {
+      if (
+        (!currDayResults || currDayData.length === 0) &&
+        alertData.isShowing === false
+      ) {
         setAlertData({
           isShowing: true,
           message:
