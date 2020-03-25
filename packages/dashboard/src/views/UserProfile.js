@@ -28,7 +28,7 @@ const UserProfileLite = props => {
           justifyContent: 'center',
         }}
       >
-        <Col lg="6">
+        <Col lg="6" className="mb-4">
           <InfoSidebar />
         </Col>
         {isStatusLoading ? (
