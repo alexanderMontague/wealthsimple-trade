@@ -75,7 +75,7 @@ const UserAccountDetails = ({
   }
 
   return (
-    <Card small className="mb-4 h-100">
+    <Card small className="mb-4">
       <CardHeader className="border-bottom">
         <h4 className="m-0">{title}</h4>
       </CardHeader>
@@ -86,8 +86,8 @@ const UserAccountDetails = ({
           </h6>
         </Col>
       </Row>
-      <Form className="p-3 h-100" onSubmit={loginHandler}>
-        <Row className="my-4">
+      <Form className="p-3 h-90" onSubmit={loginHandler}>
+        <Row className="mb-2">
           {/* Email */}
           <Col md="12" className="form-group">
             <label htmlFor="feEmail">Email</label>
@@ -110,7 +110,7 @@ const UserAccountDetails = ({
           </Col>
         </Row>
 
-        <Row form className="my-4">
+        <Row form className="mb-2">
           {/* Password */}
           <Col md="12" className="form-group">
             <label htmlFor="fePassword">Password</label>
