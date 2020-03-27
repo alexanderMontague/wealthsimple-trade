@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 
 import { tradeActions } from '../redux/actions'
 
-import { getFormattedAccount } from '../utils/helpers'
+import { getFormattedAccount, isHistoryDataValid } from '../utils/helpers'
 
 import {
   Alert,
@@ -35,6 +35,7 @@ const Holdings = ({
   user,
   historicQuotes,
   globalSelectedAccount,
+  isHistoryLoading,
 }) => {
   const [dropdownState, setDropdownState] = useState({
     isOpen: false,
@@ -71,8 +72,36 @@ const Holdings = ({
         tokens: JSON.stringify(user.tokens),
       })
     }
+
     return () => null
   }, [selectedAccount])
+
+  useEffect(() => {
+    if (!isHistoryLoading) {
+      // if markets just opened and we don't have data yet
+      if (
+        !isHistoryDataValid(['1d', 'all'], historicQuotes) &&
+        selectedAccount &&
+        !alertData.isShowing
+      ) {
+        setAlertData({
+          isShowing: true,
+          message:
+            'Markets have just opened. WST quotes are 15 minutes behind. Check back soon!',
+        })
+      } else if (
+        isHistoryDataValid(['1d', 'all'], historicQuotes) &&
+        selectedAccount &&
+        alertData.isShowing
+      ) {
+        setAlertData({
+          isShowing: false,
+          message: '',
+        })
+      }
+    }
+    return () => {}
+  }, [historicQuotes])
 
   // TODO shards dropdowns are jank... figure out a better way to do this
   const handleDropdownClick = ({ target }) => {
@@ -121,29 +150,12 @@ const Holdings = ({
     const defaultSmallStats = [...smallStats]
 
     // if we have account overview data, override defaults
-    if (historicQuotes['1d'] && historicQuotes['all'] && selectedAccount) {
+    if (isHistoryDataValid(['1d', 'all'], historicQuotes) && selectedAccount) {
       const currDayData = historicQuotes['1d']
       const currDayResults = currDayData.results[currDayData.results.length - 1]
 
       const currAllData = historicQuotes['all']
       const currAllResults = currAllData.results[currAllData.results.length - 1]
-
-      // if markets just opened and we don't have data yet
-      if (
-        (!currDayResults || currDayData.length === 0) &&
-        alertData.isShowing === false
-      ) {
-        setAlertData({
-          isShowing: true,
-          message:
-            'Markets have just opened. WST quotes are 15 minutes behind. Check back soon!',
-        })
-      } else if (currDayData.length !== 0 && alertData.isShowing === true) {
-        setAlertData({
-          isShowing: false,
-          message: '',
-        })
-      }
 
       // Override cash value (buying power)
       defaultSmallStats[0] = {
@@ -164,6 +176,7 @@ const Holdings = ({
       }
 
       // override current balance
+      // todo use calculated value instead
       defaultSmallStats[2] = {
         ...defaultSmallStats[2],
         value: Math.round(currDayResults.value.amount * 100) / 100,
@@ -228,16 +241,13 @@ const Holdings = ({
     ))
   }
 
-  // todo move this to only update on account change
-  const accountSmallStats = renderSmallStats()
-
   const renderTableData = () => {
-    // check if we have account  data
-    if (historicQuotes['1d'] && historicQuotes['all'] && selectedAccount) {
+    // check if we have account data
+    if (isHistoryDataValid(['1d', 'all'], historicQuotes) && selectedAccount) {
       const positions = selectedAccount.positions
       const currDayData = historicQuotes['1d']
       const currDayResults = currDayData.results[currDayData.results.length - 1]
-      const portfolioValue = currDayResults.value.amount
+      const portfolioValue = currDayResults.value.amount // todo use calculated value instead
 
       return positions.map(position => (
         <tr key={position.id}>
@@ -276,6 +286,8 @@ const Holdings = ({
     }
   }
 
+  // todo move this to only update on account change
+  const accountSmallStats = renderSmallStats()
   const accountTableData = renderTableData()
 
   return (
@@ -530,6 +542,7 @@ const mapStateToProps = state => ({
   accounts: state.trade.accounts,
   user: state.auth.user,
   historicQuotes: state.trade.historicQuotes,
+  isHistoryLoading: state.trade.isHistoryLoading,
   globalSelectedAccount: state.trade.selectedAccount,
 })
 
