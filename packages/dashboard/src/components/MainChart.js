@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import moment from 'moment'
 import PropTypes from 'prop-types'
 import { Card, CardHeader, CardBody, Button, CardFooter } from 'shards-react'
 
@@ -84,6 +83,14 @@ const MainChart = ({
 
 MainChart.defaultProps = {
   portfolioRanges: ['1d', '1w', '1m', '3m', '1y', 'All'],
+}
+
+MainChart.PropTypes = {
+  portfolioRanges: PropTypes.array,
+  onRangeChange: PropTypes.function,
+  type: PropTypes.string,
+  chartdata: PropTypes.object,
+  chartTitle: PropTypes.string,
 }
 
 export default MainChart
