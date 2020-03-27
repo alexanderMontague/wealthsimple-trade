@@ -11,6 +11,8 @@ import {
   CardFooter,
 } from 'shards-react'
 
+import { isHistoryDataValid } from '../utils/helpers'
+
 import Chart from '../utils/chart'
 import chartColors from '../assets/chartColors'
 
@@ -47,7 +49,7 @@ class AccountBreakdown extends React.Component {
     const chartData = { ...defaultChartData }
 
     // if the user selected a new range and we have data for it
-    if (currDayData) {
+    if (isHistoryDataValid(['1d'], historicQuotes)) {
       // get data from portfolio
       const currDayResults = currDayData.results[currDayData.results.length - 1]
       const portfolioValue = currDayResults.value.amount
