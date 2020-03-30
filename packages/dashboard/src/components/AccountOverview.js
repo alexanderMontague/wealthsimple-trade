@@ -2,19 +2,10 @@ import React from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import PropTypes from 'prop-types'
-import {
-  Row,
-  Col,
-  Card,
-  CardHeader,
-  CardBody,
-  Button,
-  CardFooter,
-} from 'shards-react'
 
 import { tradeActions } from '../redux/actions'
 
-import Chart from '../utils/chart'
+import MainChart from './MainChart'
 
 class AccountOverview extends React.Component {
   constructor(props) {
@@ -27,6 +18,7 @@ class AccountOverview extends React.Component {
       selectedRange: '1d',
       selectedRangeData: [],
       portfolioRanges: ['1d', '1w', '1m', '3m', '1y', 'All'],
+      chartData: {},
     }
   }
 
@@ -40,9 +32,8 @@ class AccountOverview extends React.Component {
       this.renderChart()
   }
 
-  selectRange = event => {
+  selectRange = selectedRange => {
     const { selectedAccount, getHistory, user } = this.props
-    const selectedRange = event.target.value
 
     // return if no account is selected yet
     if (!selectedAccount) return
@@ -142,59 +133,28 @@ class AccountOverview extends React.Component {
       ...this.props.chartOptions,
     }
 
-    // remove old chart
-    if (this.chartRef) {
-      this.chartRef.destroy()
-    }
-
-    this.chartRef = new Chart(this.canvasRef.current, {
-      type: 'LineWithLine',
-      data: chartDefaultData,
-      options: chartOptions,
+    this.setState({
+      chartData: {
+        data: chartDefaultData,
+        options: chartOptions,
+      },
     })
   }
 
-  renderButtons = () =>
-    this.state.portfolioRanges.map(range => (
-      <Button
-        key={`${range}-button`}
-        size="md"
-        className="btn-white"
-        style={{
-          width: 100,
-          backgroundColor: this.state.selectedRange === range && '#007bff',
-          color: this.state.selectedRange === range && '#ffffff',
-        }}
-        value={range}
-        onClick={this.selectRange}
-      >
-        {range}
-      </Button>
-    ))
-
   render() {
-    const { selectedAccount, historicQuotes } = this.props
+    const { selectedAccount } = this.props
 
     return (
-      <Card small className="h-100">
-        <CardHeader className="border-bottom">
-          <h6 className="m-0">
-            {selectedAccount
-              ? `${selectedAccount.display} Account Details`
-              : 'Select an Account'}
-          </h6>
-        </CardHeader>
-        <CardBody className="pt-0">
-          <canvas
-            height="120"
-            ref={this.canvasRef}
-            style={{ maxWidth: '100% !important' }}
-          />
-        </CardBody>
-        <CardFooter className="d-flex justify-content-around">
-          {this.renderButtons()}
-        </CardFooter>
-      </Card>
+      <MainChart
+        type="LineWithLine"
+        chartData={this.state.chartData}
+        onRangeChange={this.selectRange}
+        chartTitle={
+          selectedAccount
+            ? `${selectedAccount.display} Account Details`
+            : 'Select an Account'
+        }
+      />
     )
   }
 }
