@@ -18,7 +18,7 @@ import {
   CardHeader,
   CardBody,
 } from 'shards-react'
-import WatchlistItem from './WatchlistItem'
+
 
 
 
