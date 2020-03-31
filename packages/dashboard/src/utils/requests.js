@@ -56,3 +56,12 @@ export const getHistory = async ({ times, account, tokens }) =>
       getHeaders({ tokens })
     )
   ).data
+
+// get watchlist
+export const getWatchlist = async ({ tokens }) =>
+(
+  await axios.get(
+    `${BASE_URL}/watchlist`,
+    getHeaders({ tokens })
+  )
+).data
