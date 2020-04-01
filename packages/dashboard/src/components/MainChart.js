@@ -5,7 +5,7 @@ import { Card, CardHeader, CardBody, Button, CardFooter } from 'shards-react'
 const MainChart = ({
   portfolioRanges,
   onRangeChange,
-  type,
+  type = 'LineWithLine',
   chartData,
   chartTitle,
 }) => {
@@ -26,7 +26,7 @@ const MainChart = ({
     setselectedRange(selectedRange)
 
     // trigger any external range change actions
-    onRangeChange(selectedRange)
+    onRangeChange && onRangeChange(selectedRange)
   }
 
   const renderChart = () => {
@@ -85,9 +85,9 @@ MainChart.defaultProps = {
   portfolioRanges: ['1d', '1w', '1m', '3m', '1y', 'All'],
 }
 
-MainChart.PropTypes = {
+MainChart.propTypes = {
   portfolioRanges: PropTypes.array,
-  onRangeChange: PropTypes.function,
+  onRangeChange: PropTypes.func,
   type: PropTypes.string,
   chartdata: PropTypes.object,
   chartTitle: PropTypes.string,
