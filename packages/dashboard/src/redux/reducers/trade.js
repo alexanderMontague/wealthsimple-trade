@@ -5,6 +5,8 @@ import {
   LOGOUT_USER_SUCCESS,
   GET_HISTORY,
   GET_HISTORY_RESPONSE,
+  GET_WATCHLIST,
+  GET_WATCHLIST_RESPONSE
 } from '../constants'
 
 const initialState = {
@@ -12,6 +14,8 @@ const initialState = {
   accounts: {},
   isHistoryLoading: false,
   historicQuotes: {},
+  watchlist: {},
+  isWatchlistLoading: false,
 }
 
 const tradeState = (prevState = initialState, { type, payload }) => {
@@ -67,6 +71,21 @@ const tradeState = (prevState = initialState, { type, payload }) => {
           ...prevState.historicQuotes,
           ...payload.data,
         },
+      }
+    }
+
+    case GET_WATCHLIST: {
+      return {
+        ...prevState,
+        isWatchlistLoading: true,
+      }
+    }
+
+    case GET_WATCHLIST_RESPONSE: {
+      return {
+        ...prevState,
+        isWatchlistLoading: false,
+        watchlist: payload.data,
       }
     }
 
