@@ -27,7 +27,7 @@ function* getAccountWatchlist({ payload }) {
     watchlistData = createResponse(
       error.response?.status,
       error.message,
-      null,
+      {},
       true
     )
   }

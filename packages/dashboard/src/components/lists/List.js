@@ -22,7 +22,7 @@ import {
 
 
 
-const Watchlist = ({
+const List = ({
   accounts,
   user,
   historicQuotes,
@@ -33,7 +33,6 @@ const Watchlist = ({
   
 
   return (
-    <>
      <Container fluid className="main-content-container px-4">
 
         <Row>
@@ -98,7 +97,6 @@ const Watchlist = ({
             </Col>
         </Row>
     </Container>
-    </>
   )
 }
 
@@ -117,4 +115,4 @@ const mapDispatchToProps = {
   getWatchlist: tradeActions.getWatchlistData
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Watchlist)
+export default connect(mapStateToProps, mapDispatchToProps)(List)

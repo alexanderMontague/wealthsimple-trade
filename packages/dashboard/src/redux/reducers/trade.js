@@ -85,10 +85,7 @@ const tradeState = (prevState = initialState, { type, payload }) => {
       return {
         ...prevState,
         isWatchlistLoading: false,
-        watchlist: {
-          ...prevState.watchlist,
-          ...payload.data,
-        },
+        watchlist: payload.data,
       }
     }
 

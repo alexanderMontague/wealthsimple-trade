@@ -18,11 +18,11 @@ import {
   Button,
 } from 'shards-react'
 
-import Watchlist from '../components/lists/Watchlist'
+import List from '../components/lists/List'
 import PageTitle from '../components/common/PageTitle'
 
 
-const Lists = ({
+const Watchlists = ({
   getWatchlist,
   watchlist,
   user,
@@ -77,4 +77,4 @@ const mapDispatchToProps = {
   getWatchlist: tradeActions.getWatchlistData
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Lists)
+export default connect(mapStateToProps, mapDispatchToProps)(Watchlists)
