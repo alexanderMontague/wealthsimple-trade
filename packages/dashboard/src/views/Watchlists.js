@@ -53,9 +53,9 @@ const Watchlists = ({
         <button onClick={checkWatchlist}>
           check wl
         </button>
-        <Watchlist />
-        <Watchlist />
-        <Watchlist />
+        <List />
+        <List />
+        <List />
 
     </Container>
     </>

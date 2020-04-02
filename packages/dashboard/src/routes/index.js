@@ -13,7 +13,7 @@ import Errors from '../views/Errors'
 import ComponentsOverview from '../views/ComponentsOverview'
 import Tables from '../views/Tables'
 import BlogPosts from '../views/BlogPosts'
-import Lists from '../views/Lists'
+import Watchlists from '../views/Watchlists'
 
 export default [
     {
@@ -37,7 +37,7 @@ export default [
     {
         path: '/watchlist',
         layout: DefaultLayout,
-        component: Lists,
+        component: Watchlists,
         exact: true,
     },
     {
