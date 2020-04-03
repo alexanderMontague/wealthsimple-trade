@@ -2,7 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { Container, Row, Col } from 'shards-react'
-import _ from 'lodash'
+
+import { tradeActions } from '../redux/actions'
 
 import MainChart from '../components/MainChart'
 import SecurityList from '../components/SecurityList'
@@ -11,40 +12,50 @@ import PageTitle from './../components/common/PageTitle'
 import NewDraft from './../components/blog/NewDraft'
 import Discussions from './../components/blog/Discussions'
 
-const Trade = ({ chartData }) => (
-  <Container fluid className="main-content-container px-4">
-    {/* Page Header */}
-    <Row noGutters className="page-header py-4">
-      <PageTitle
-        title="Buy and Sell"
-        subtitle="Trade"
-        className="text-sm-left mb-3"
-      />
-    </Row>
+const Trade = ({ chartData }) => {
+  // state selection
+  const selectedAccount = useSelector(state => state.trade.selectedAccount)
+  const accounts = useSelector(state => state.trade.accounts)
 
-    <Row>
-      {/* Left Column */}
-      <Col lg="8" md="12" sm="12" className="mb-4">
-        <Col className="mb-4 p-0">
-          <MainChart chartData={chartData} chartTitle="Selected Option" />
-        </Col>
-        <Col className="mb-4 p-0">
-          <NewDraft />
-        </Col>
-      </Col>
+  const currentAccount = selectedAccount
+    ? accounts[selectedAccount.value]
+    : null
 
-      {/* Right Column */}
-      <Col lg="4" md="12" sm="12" className="mb-4">
-        <Col className="mb-4 p-0">
-          <SecurityList />
+  return (
+    <Container fluid className="main-content-container px-4">
+      {/* Page Header */}
+      <Row noGutters className="page-header py-4">
+        <PageTitle
+          title="Buy and Sell"
+          subtitle="Trade"
+          className="text-sm-left mb-3"
+        />
+      </Row>
+
+      <Row>
+        {/* Left Column */}
+        <Col lg="8" md="12" sm="12" className="mb-4">
+          <Col className="mb-4 p-0">
+            <MainChart chartData={chartData} chartTitle="Selected Option" />
+          </Col>
+          <Col className="mb-4 p-0">
+            <NewDraft />
+          </Col>
         </Col>
-        <Col className="mb-4 p-0">
-          <Discussions />
+
+        {/* Right Column */}
+        <Col lg="4" md="12" sm="12" className="mb-4">
+          <Col className="mb-4 p-0">
+            <SecurityList currentAccount={currentAccount} />
+          </Col>
+          <Col className="mb-4 p-0">
+            <Discussions />
+          </Col>
         </Col>
-      </Col>
-    </Row>
-  </Container>
-)
+      </Row>
+    </Container>
+  )
+}
 
 Trade.propTypes = {
   /**
