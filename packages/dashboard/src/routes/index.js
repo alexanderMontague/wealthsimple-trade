@@ -38,7 +38,7 @@ export default [
   {
     path: '/watchlist',
     layout: DefaultLayout,
-    component: BlogOverview,
+    component: Watchlists,
     exact: true,
   },
   {

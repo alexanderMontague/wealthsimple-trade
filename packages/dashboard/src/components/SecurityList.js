@@ -61,8 +61,6 @@ const SecurityList = ({ title, referralData, currentAccount }) => {
         </div>
       )
 
-    console.log(currentAccount.positions)
-
     return currentAccount.positions.map(security => (
       <Security
         key={security.stock.symbol}
