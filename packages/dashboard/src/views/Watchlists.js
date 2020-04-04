@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 
 import { tradeActions } from '../redux/actions'
 
-
 import {
   Alert,
   Container,
@@ -21,60 +20,45 @@ import {
 import List from '../components/lists/List'
 import PageTitle from '../components/common/PageTitle'
 
-
-const Watchlists = ({
-  getWatchlist,
-  watchlist,
-  user,
-  isLoggedIn
-}) => {
-
+const Watchlists = ({ getWatchlist, watchlist, user, isLoggedIn }) => {
   useEffect(() => {
     if (isLoggedIn) {
-      getWatchlist({tokens: JSON.stringify(user.tokens)})
+      getWatchlist({ tokens: JSON.stringify(user.tokens) })
     }
   }, [isLoggedIn])
 
-  const checkWatchlist = () => {
-    console.log(watchlist)
+  const renderList = () => {
+    return watchlist.securities ? (
+      <List listTitle={'WST Watchlist'} items={watchlist.securities} />
+    ) : (
+      <h2 style={{ margin: 'auto' }}>Loading Watchlist Data...</h2>
+    )
   }
+
+  const list = renderList()
 
   return (
     <>
-     <Container fluid className="main-content-container px-4">
+      <Container fluid className="main-content-container px-4">
         {/* Page Header */}
         <Row noGutters className="page-header py-4">
-            <PageTitle
-                sm="4"
-                title="Watchlists"
-                className="text-sm-left"
-            />
+          <PageTitle sm="4" title="Watchlists" className="text-sm-left" />
         </Row>
-        <button onClick={checkWatchlist}>
-          check wl
-        </button>
-        <List />
-        <List />
-        <List />
 
-    </Container>
+        <Row>{list}</Row>
+      </Container>
     </>
   )
 }
 
-
-
-
-
-
 const mapStateToProps = state => ({
   isLoggedIn: state.auth.isLoggedIn,
   user: state.auth.user,
-  watchlist: state.trade.watchlist
+  watchlist: state.trade.watchlist,
 })
 
 const mapDispatchToProps = {
-  getWatchlist: tradeActions.getWatchlistData
+  getWatchlist: tradeActions.getWatchlistData,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Watchlists)
