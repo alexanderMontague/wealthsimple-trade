@@ -20,7 +20,13 @@ import {
 import List from '../components/lists/List'
 import PageTitle from '../components/common/PageTitle'
 
-const Watchlists = ({ getWatchlist, watchlist, user, isLoggedIn }) => {
+const Watchlists = ({
+  getWatchlist,
+  watchlist,
+  isWatchlistLoading,
+  user,
+  isLoggedIn,
+}) => {
   useEffect(() => {
     if (isLoggedIn) {
       getWatchlist({ tokens: JSON.stringify(user.tokens) })
@@ -28,10 +34,14 @@ const Watchlists = ({ getWatchlist, watchlist, user, isLoggedIn }) => {
   }, [isLoggedIn])
 
   const renderList = () => {
-    return watchlist.securities ? (
-      <List listTitle={'WST Watchlist'} items={watchlist.securities} />
-    ) : (
+    return isWatchlistLoading ? (
       <h2 style={{ margin: 'auto' }}>Loading Watchlist Data...</h2>
+    ) : watchlist.securities ? (
+      <List listTitle={'WST Watchlist'} items={watchlist.securities} />
+    ) : watchlist.error ? (
+      <h2 style={{ margin: 'auto' }}>{watchlist.error.message}</h2>
+    ) : (
+      <></>
     )
   }
 
@@ -55,6 +65,7 @@ const mapStateToProps = state => ({
   isLoggedIn: state.auth.isLoggedIn,
   user: state.auth.user,
   watchlist: state.trade.watchlist,
+  isWatchlistLoading: state.trade.isWatchlistLoading,
 })
 
 const mapDispatchToProps = {
