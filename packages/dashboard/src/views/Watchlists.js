@@ -40,9 +40,7 @@ const Watchlists = ({
       <List listTitle={'WST Watchlist'} items={watchlist.securities} />
     ) : watchlist.error ? (
       <h2 style={{ margin: 'auto' }}>{watchlist.error.message}</h2>
-    ) : (
-      <></>
-    )
+    ) : null
   }
 
   const list = renderList()
