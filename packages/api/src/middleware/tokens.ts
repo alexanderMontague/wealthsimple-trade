@@ -9,10 +9,19 @@ export const checkTokens = (req, res, next) => {
   if (req.path === '/api/v1/login') return next()
 
   // if tokens are not there, return right away
-  if (!rawTokens || rawTokens === 'null') {
+  if (!rawTokens || rawTokens === 'null' || rawTokens === 'undefined') {
     return res
       .status(403)
       .json(createResponse(403, 'Auth token missing or expired', {}, true))
+  }
+
+  // if tokens were not stringified
+  if (rawTokens === '[object Object]') {
+    return res
+      .status(422)
+      .json(
+        createResponse(422, 'Did you forget to stringify tokens?', {}, true)
+      )
   }
 
   // if tokens are there, parse and attach to the request

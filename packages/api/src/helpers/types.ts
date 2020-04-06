@@ -10,8 +10,10 @@ export interface Tokens {
   refresh: String
 }
 
+export type Time = '1d' | '1w' | '1m' | '3m' | '1y' | '5y' | 'All'
+
 export interface HistoryParam {
-  time: String
+  time: Time
   account: String
   tokens: Tokens
 }

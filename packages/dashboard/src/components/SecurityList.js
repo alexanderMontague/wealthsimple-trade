@@ -18,15 +18,27 @@ const gainStyles = {
   red: '#c4183c',
 }
 
-const Security = ({ symbol, name, exchange, price, gain, currency }) => {
+const Security = ({
+  symbol,
+  name,
+  exchange,
+  price,
+  gain,
+  currency,
+  id,
+  selectSecurity,
+  selectedSecurity,
+}) => {
   return (
     <>
       <ListGroupItem
-        className="d-flex px-3 flex-column security"
+        className={`d-flex px-3 flex-column security`}
         style={{
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
+          background: selectedSecurity?.id === id ? '#e1e5eb' : null,
         }}
+        onClick={() => selectSecurity({ id, symbol, name, exchange, currency })}
       >
         <div>
           <div style={{ fontSize: 20 }}>
@@ -41,8 +53,17 @@ const Security = ({ symbol, name, exchange, price, gain, currency }) => {
             </div>
           </div>
           <div className="d-flex flex-column justify-content-center w-100">
-            <div className="pb-1">${price}</div>
-            <div className="pb-1">{`${gain.value} (${gain.percent}%) ${currency}`}</div>
+            <div className="pb-1">${Math.round(price * 100) / 100}</div>
+            <div className="pb-1">
+              <span
+                style={{
+                  color: gain.value < 0 ? gainStyles.red : gainStyles.green,
+                }}
+              >{`${Math.round(gain.value * 100) / 100} (${Math.round(
+                gain.percent * 100
+              ) / 100}%)`}</span>{' '}
+              {currency}
+            </div>
           </div>
         </div>
       </ListGroupItem>
@@ -52,9 +73,15 @@ const Security = ({ symbol, name, exchange, price, gain, currency }) => {
   )
 }
 
-const SecurityList = ({ title, referralData, currentAccount }) => {
+const SecurityList = ({
+  title,
+  currentAccount,
+  selectSecurity,
+  selectedSecurity,
+}) => {
   const renderPositions = () => {
     if (!currentAccount?.positions)
+      // todo: show when accounts have no holdings too
       return (
         <div className="pt-5" style={{ textAlign: 'center' }}>
           Select an account!
@@ -63,16 +90,19 @@ const SecurityList = ({ title, referralData, currentAccount }) => {
 
     return currentAccount.positions.map(security => (
       <Security
-        key={security.stock.symbol}
+        id={security.id}
+        selectSecurity={selectSecurity}
+        key={security.id}
         symbol={security.stock.symbol}
         name={security.stock.name}
         exchange={security.stock.primary_exchange}
         price={security.quote.amount}
         gain={{
           value: security.quote.amount - security.quote.previous_close,
-          percent: 0.0,
+          percent: security.quote.amount / security.quote.previous_close - 1,
         }}
         currency={security.currency}
+        selectedSecurity={selectedSecurity}
       />
     ))
   }
@@ -103,80 +133,10 @@ SecurityList.propTypes = {
    * The component's title.
    */
   title: PropTypes.string,
-  /**
-   * The referral data.
-   */
-  referralData: PropTypes.array,
 }
 
 SecurityList.defaultProps = {
   title: 'Portfolio',
-  referralData: [
-    {
-      title: 'GitHub',
-      value: '19,291',
-    },
-    {
-      title: 'Stack Overflow',
-      value: '11,201',
-    },
-    {
-      title: 'Hacker News',
-      value: '9,291',
-    },
-    {
-      title: 'Reddit',
-      value: '8,281',
-    },
-    {
-      title: 'The Next Web',
-      value: '7,128',
-    },
-    {
-      title: 'Tech Crunch',
-      value: '6,218',
-    },
-    {
-      title: 'YouTube',
-      value: '1,218',
-    },
-    {
-      title: 'Adobe',
-      value: '1,171',
-    },
-    {
-      title: 'GitHub',
-      value: '19,291',
-    },
-    {
-      title: 'Stack Overflow',
-      value: '11,201',
-    },
-    {
-      title: 'Hacker News',
-      value: '9,291',
-    },
-    {
-      title: 'Reddit',
-      value: '8,281',
-    },
-    {
-      title: 'The Next Web',
-      value: '7,128',
-    },
-    {
-      title: 'Tech Crunch',
-      value: '6,218',
-    },
-    {
-      title: 'YouTube',
-      value: '1,218',
-    },
-    {
-      title: 'Adobe',
-      value: '1,171',
-    },
-  ],
 }
 
 export default SecurityList

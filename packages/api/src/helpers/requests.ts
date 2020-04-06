@@ -33,19 +33,37 @@ export const WST_positions = async (tokens: Tokens) =>
 
 // Get Account Historical Data
 export const WST_getHistory = async ({ time, account, tokens }: HistoryParam) =>
-  (await axios.get(
-    `${BASE_URL}/account/history/${time}?account_id=${account}`,
-    getConfig(tokens)
-  )).data
+  (
+    await axios.get(
+      `${BASE_URL}/account/history/${time}?account_id=${account}`,
+      getConfig(tokens)
+    )
+  ).data
 
 // Get Watchlist
 export const WST_getWatchlist = async (tokens: Tokens, limit: Number = null) =>
-  (await axios.get(
-    `${BASE_URL}/watchlist${limit ? `?limit=${limit}` : ''}`,
-    getConfig(tokens)
-  )).data
+  (
+    await axios.get(
+      `${BASE_URL}/watchlist${limit ? `?limit=${limit}` : ''}`,
+      getConfig(tokens)
+    )
+  ).data
 
-// Get Specific Security Info
-export const WST_getSecurity = async (tokens: Tokens, symbol: String) =>
-  (await axios.get(`${BASE_URL}/securities?query=${symbol}`, getConfig(tokens)))
+// Search for securities
+export const WST_searchSecurity = async (tokens: Tokens, query: String) =>
+  (await axios.get(`${BASE_URL}/securities?query=${query}`, getConfig(tokens)))
     .data
+
+// Get security Historical Data
+export const WST_getSecurity = async ({
+  tokens,
+  securityId,
+  time,
+  mic = 'XNAS',
+}) =>
+  (
+    await axios.get(
+      `${BASE_URL}/securities/${securityId}/historical_quotes/${time}?mic=${mic}`,
+      getConfig(tokens)
+    )
+  ).data

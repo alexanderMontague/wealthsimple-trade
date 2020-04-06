@@ -17,7 +17,7 @@ function* getUserStatus({ payload }) {
 
     statusResponse = createResponse(
       error.response?.status,
-      error.message,
+      error.response?.data?.message || error.message,
       {},
       true
     )
@@ -35,7 +35,7 @@ function* attemptLoginUser({ payload }) {
   } catch (error) {
     loginResponse = createResponse(
       error.response?.status,
-      error.message,
+      error.response?.data?.message || error.message,
       {},
       true
     )

@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Container, Row, Col } from 'shards-react'
+import moment from 'moment'
 
 import { tradeActions } from '../redux/actions'
 
@@ -16,10 +17,77 @@ const Trade = ({ chartData }) => {
   // state selection
   const selectedAccount = useSelector(state => state.trade.selectedAccount)
   const accounts = useSelector(state => state.trade.accounts)
+  const selectedSecurity = useSelector(state => state.trade.selectedSecurity)
 
+  // dispatching
+  const dispatch = useDispatch()
+
+  // select security from portfolio
+  const selectSecurity = security => {
+    setSelectedRange('1d')
+    dispatch(tradeActions.selectSecurity(security))
+  }
+
+  // internal state
+  const [selectedRange, setSelectedRange] = useState('1d')
+  const [currentChartData, setCurrentChartData] = useState(chartData)
+
+  // useEffects
+  useEffect(() => {
+    // if we have data for a selected range, generate new chart data
+    if (!!selectedSecurity?.historicQuotes?.[selectedRange]) {
+      getChartData()
+    }
+  }, [selectedSecurity?.historicQuotes?.[selectedRange]])
+
+  // current selected accound
   const currentAccount = selectedAccount
     ? accounts[selectedAccount.value]
     : null
+
+  // fetch historic data about selected security for chosen range
+  const onRangeChange = selectedRange => {
+    // don't update anything if a security is not yet selected
+    if (!selectedSecurity) return
+
+    setSelectedRange(selectedRange)
+
+    dispatch(
+      tradeActions.getSecurityHistory({
+        securityId: selectedSecurity.id,
+        time: selectedRange,
+      })
+    )
+  }
+
+  const getChartData = () => {
+    const defaultChartData = { ...chartData }
+
+    const [_, ...currHistoricQuotes] = selectedSecurity.historicQuotes[
+      selectedRange
+    ]
+    const mainLabel = `[${selectedSecurity.symbol}] - ${selectedSecurity.name}`
+    const dataPoints = currHistoricQuotes.map(
+      point => point.ask || point.adj_close
+    )
+    const labels = currHistoricQuotes.map(point =>
+      moment(`${point.date} ${point.time}`, 'YYYY-MM-DD HH:mm:ss').format(
+        'MMM DD, YYYY h:mm A'
+      )
+    )
+
+    // override default data
+    defaultChartData.data.labels = labels
+    defaultChartData.data.datasets = [
+      {
+        ...defaultChartData.data.datasets[0],
+        label: mainLabel,
+        data: dataPoints,
+      },
+    ]
+
+    setCurrentChartData(defaultChartData)
+  }
 
   return (
     <Container fluid className="main-content-container px-4">
@@ -36,7 +104,14 @@ const Trade = ({ chartData }) => {
         {/* Left Column */}
         <Col lg="8" md="12" sm="12" className="mb-4">
           <Col className="mb-4 p-0">
-            <MainChart chartData={chartData} chartTitle="Selected Option" />
+            <MainChart
+              overrideRanges={['1d', '1w', '1m', '3m', '1y', '5y']}
+              chartData={currentChartData}
+              chartTitle={
+                selectedSecurity ? selectedSecurity.name : 'Selected Option'
+              }
+              onRangeChange={onRangeChange}
+            />
           </Col>
           <Col className="mb-4 p-0">
             <NewDraft />
@@ -46,7 +121,11 @@ const Trade = ({ chartData }) => {
         {/* Right Column */}
         <Col lg="4" md="12" sm="12" className="mb-4">
           <Col className="mb-4 p-0">
-            <SecurityList currentAccount={currentAccount} />
+            <SecurityList
+              currentAccount={currentAccount}
+              selectSecurity={selectSecurity}
+              selectedSecurity={selectedSecurity}
+            />
           </Col>
           <Col className="mb-4 p-0">
             <Discussions />

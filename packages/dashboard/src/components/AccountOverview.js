@@ -11,9 +11,6 @@ class AccountOverview extends React.Component {
   constructor(props) {
     super(props)
 
-    this.canvasRef = React.createRef()
-    this.chartRef = null
-
     this.state = {
       selectedRange: '1d',
       selectedRangeData: [],
@@ -77,10 +74,6 @@ class AccountOverview extends React.Component {
         },
       ]
     }
-
-    // to prevent chart re-render
-    // if we don't have data but default chart has already been rendered
-    if (!currHistoricData && this.chartRef) return
 
     const chartOptions = {
       ...{
