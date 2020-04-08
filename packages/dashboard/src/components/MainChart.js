@@ -3,9 +3,10 @@ import PropTypes from 'prop-types'
 import { Card, CardHeader, CardBody, Button, CardFooter } from 'shards-react'
 
 const MainChart = ({
+  overrideRanges,
   portfolioRanges,
   onRangeChange,
-  type,
+  type = 'LineWithLine',
   chartData,
   chartTitle,
 }) => {
@@ -14,11 +15,16 @@ const MainChart = ({
   const [chartRef, setChartRef] = useState(null)
   const [selectedRange, setselectedRange] = useState('1d')
 
+  // reset range selection on title change
+  useEffect(() => {
+    setselectedRange('1d')
+  }, [chartTitle])
+
   useEffect(() => {
     if (chartData?.data) {
       renderChart()
     }
-  }, [chartData])
+  }, [chartData?.data?.datasets?.[0]?.data])
 
   const onRangeClick = e => {
     // update internal selected state
@@ -26,7 +32,7 @@ const MainChart = ({
     setselectedRange(selectedRange)
 
     // trigger any external range change actions
-    onRangeChange(selectedRange)
+    onRangeChange && onRangeChange(selectedRange)
   }
 
   const renderChart = () => {
@@ -45,7 +51,7 @@ const MainChart = ({
   }
 
   const renderButtons = () =>
-    portfolioRanges.map(range => (
+    (overrideRanges || portfolioRanges).map(range => (
       <Button
         key={`${range}-button`}
         size="md"
@@ -85,9 +91,9 @@ MainChart.defaultProps = {
   portfolioRanges: ['1d', '1w', '1m', '3m', '1y', 'All'],
 }
 
-MainChart.PropTypes = {
+MainChart.propTypes = {
   portfolioRanges: PropTypes.array,
-  onRangeChange: PropTypes.function,
+  onRangeChange: PropTypes.func,
   type: PropTypes.string,
   chartdata: PropTypes.object,
   chartTitle: PropTypes.string,

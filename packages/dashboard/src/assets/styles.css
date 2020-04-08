@@ -1,0 +1,8 @@
+.security:hover {
+  cursor: pointer;
+  background: #e1e5eb;
+}
+
+.securitySelected {
+  background: #e1e5eb;
+}

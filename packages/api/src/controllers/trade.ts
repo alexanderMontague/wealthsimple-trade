@@ -1,9 +1,10 @@
 import { createResponse, getError } from '../helpers'
-import { Tokens } from '../helpers/types'
+import { Tokens, Time } from '../helpers/types'
 
 import {
   WST_getHistory,
   WST_getWatchlist,
+  WST_searchSecurity,
   WST_getSecurity,
 } from '../helpers/requests'
 
@@ -87,9 +88,52 @@ export async function getWatchlist(req, res, next) {
 }
 
 /*
- *   GET /api/v1/securities?query=<SYMBOL>
+ *   GET /api/v1/securities?query=<QUERY>
  *
- *   SYMBOL - Identifying Ssecurity ticker. Ex. AAPL
+ *   QUERY - Query searching for a certain security. Ex. MS returns Morgan Stanley, MSFT etc...
+ *
+ *   RES: {
+ *     response: {
+ *       code: Integer,
+ *       message: String,
+ *       data: Object || Array || null,
+ *       error: Boolean
+ *     }
+ *   }
+ */
+export async function searchSecurity(req, res, next) {
+  let securityQueryData = {}
+  const tokens: Tokens = req.tokens
+  const query = req.params?.query
+
+  if (!query) {
+    return res
+      .status(422)
+      .json(createResponse(422, 'Missing security query', {}, true))
+  }
+
+  try {
+    securityQueryData = await WST_searchSecurity(tokens, query)
+  } catch (error) {
+    return res.status(400).json(createResponse(400, getError(error), {}, true))
+  }
+
+  res.json(
+    createResponse(
+      200,
+      `Fetched security data for query: ${query}`,
+      securityQueryData,
+      false
+    )
+  )
+}
+
+/*
+ *   GET /api/v1/securities/<SECURITY_ID>/historical_quotes/<TIME>/<MIC>
+ *
+ *   SECURITY_ID - Security id from WS
+ *   TIME - Time period to fetch data about security [1d, 1w, 1m, 3m, 1y, all]
+ *   MIC - Market Identifier Code. Generally XNAS.
  *
  *   RES: {
  *     response: {
@@ -103,16 +147,31 @@ export async function getWatchlist(req, res, next) {
 export async function getSecurity(req, res, next) {
   let securityData = {}
   const tokens: Tokens = req.tokens
-  const ticker = req.params?.query
+  const securityId = req.params?.security_id
+  const time: Time = req.params?.time
+  const mic = req.query?.mic
 
-  if (!ticker) {
+  if (!securityId) {
     return res
       .status(422)
-      .json(createResponse(422, 'Missing security symbol', {}, true))
+      .json(createResponse(422, 'Missing security id', {}, true))
+  }
+
+  if (!time) {
+    return res
+      .status(422)
+      .json(createResponse(422, 'Missing time period', {}, true))
   }
 
   try {
-    securityData = await WST_getSecurity(tokens, ticker)
+    securityData[time] = (
+      await WST_getSecurity({
+        tokens,
+        securityId,
+        time,
+        mic,
+      })
+    ).results
   } catch (error) {
     return res.status(400).json(createResponse(400, getError(error), {}, true))
   }
@@ -120,7 +179,7 @@ export async function getSecurity(req, res, next) {
   res.json(
     createResponse(
       200,
-      `Fetched security data for ${ticker}`,
+      `Fetched security data for security: ${securityId}`,
       securityData,
       false
     )

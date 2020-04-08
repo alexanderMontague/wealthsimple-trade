@@ -48,7 +48,23 @@ export const getStatus = async tokens =>
 export const loginUser = async credentials =>
   (await axios.post(`${BASE_URL}/login`, credentials)).data
 
-// get historic quotes on account from current time period
+/**
+ *  Get historic quotes on account from current time period
+ *
+ *  Request Format:
+ *  GET
+ *  times: string - comma separated time values Ex. 1d,3m,1y
+ *  account: string - account id
+ *  tokens: string - stringified JSON access and refresh tokens
+ *
+ *  Response Format:
+ *  {
+ *     code: Integer,
+ *     message: String,
+ *     data: Object || Array || null,
+ *     error: Boolean
+ *   }
+ */
 export const getHistory = async ({ times, account, tokens }) =>
   (
     await axios.get(
@@ -59,9 +75,54 @@ export const getHistory = async ({ times, account, tokens }) =>
 
 // get watchlist
 export const getWatchlist = async ({ tokens }) =>
-(
-  await axios.get(
-    `${BASE_URL}/watchlist`,
-    getHeaders({ tokens })
-  )
-).data
+  (await axios.get(`${BASE_URL}/watchlist`, getHeaders({ tokens }))).data
+
+/**
+ *  Search for a security based on a provided query
+ *
+ *  Request Format:
+ *  GET
+ *  tokens: string - stringified JSON access and refresh tokens
+ *  query: string - some query to search for a security. Ex security id or partial string
+ *
+ *  Response Format:
+ *  {
+ *     code: Integer,
+ *     message: String,
+ *     data: Object || Array || null,
+ *     error: Boolean
+ *   }
+ */
+export const searchSecurity = async ({ tokens, query }) =>
+  (
+    await axios.get(
+      `${BASE_URL}/securities?query=${query}`,
+      getHeaders({ tokens })
+    )
+  ).data
+
+/**
+ *  Get historic quotes on a security from current time period
+ *
+ *  Request Format:
+ *  GET
+ *  tokens: string - stringified JSON access and refresh tokens
+ *  time: string - time value Ex. 1d,3m,1y
+ *  securityId: string - security id
+ *  mic: string - market identifier code default XNAS
+ *
+ *  Response Format:
+ *  {
+ *     code: Integer,
+ *     message: String,
+ *     data: Object || Array || null,
+ *     error: Boolean
+ *   }
+ */
+export const getSecurity = async ({ tokens, securityId, time, mic = 'XNAS' }) =>
+  (
+    await axios.get(
+      `${BASE_URL}/securities/${securityId}/historical_quotes/${time}?mic=${mic}`,
+      getHeaders({ tokens })
+    )
+  ).data
