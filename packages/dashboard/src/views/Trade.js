@@ -18,6 +18,9 @@ const Trade = ({ chartData }) => {
   const selectedAccount = useSelector(state => state.trade.selectedAccount)
   const accounts = useSelector(state => state.trade.accounts)
   const selectedSecurity = useSelector(state => state.trade.selectedSecurity)
+  const isSelectedSecurityLoading = useSelector(
+    state => state.trade.isSelectedSecurityLoading
+  )
 
   // dispatching
   const dispatch = useDispatch()
@@ -111,6 +114,7 @@ const Trade = ({ chartData }) => {
                 selectedSecurity ? selectedSecurity.name : 'Selected Option'
               }
               onRangeChange={onRangeChange}
+              loading={isSelectedSecurityLoading}
             />
           </Col>
           <Col className="mb-4 p-0">

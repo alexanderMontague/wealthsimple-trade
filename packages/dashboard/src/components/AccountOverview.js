@@ -135,7 +135,7 @@ class AccountOverview extends React.Component {
   }
 
   render() {
-    const { selectedAccount } = this.props
+    const { selectedAccount, isHistoryLoading } = this.props
 
     return (
       <MainChart
@@ -147,6 +147,7 @@ class AccountOverview extends React.Component {
             ? `${selectedAccount.display} Account Details`
             : 'Select an Account'
         }
+        loading={isHistoryLoading}
       />
     )
   }
@@ -223,6 +224,7 @@ const mapStateToProps = state => ({
   selectedAccount: state.trade.selectedAccount,
   accounts: state.trade.accounts,
   historicQuotes: state.trade.historicQuotes,
+  isHistoryLoading: state.trade.isHistoryLoading,
 })
 
 const mapDispatchToProps = {
