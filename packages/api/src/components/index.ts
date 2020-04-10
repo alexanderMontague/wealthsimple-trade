@@ -1,3 +1,3 @@
 module.exports = {
-    portfolio: require('./portfolio'),
+  portfolio: require('./portfolio'),
 }

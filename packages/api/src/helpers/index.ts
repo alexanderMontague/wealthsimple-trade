@@ -2,7 +2,7 @@ import { Response } from './types'
 
 // Decodes and Parses encoded body information
 export const decodeBody = bodyObject => {
-    return JSON.parse(new Buffer(bodyObject, 'base64').toString('ascii'))
+  return JSON.parse(new Buffer(bodyObject, 'base64').toString('ascii'))
 }
 
 /*  Formats a response to be sent back
@@ -14,15 +14,15 @@ export const decodeBody = bodyObject => {
  *  }
  */
 export const createResponse = (
-    code: Number = 500,
-    message: String = 'Something went wrong',
-    data: any,
-    error: Boolean
+  code: Number = 500,
+  message: String = 'Something went wrong',
+  data: any,
+  error: Boolean
 ): Response => ({
-    code,
-    message,
-    data,
-    error,
+  code,
+  message,
+  data,
+  error,
 })
 
 // Get an error message from requests
