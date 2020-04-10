@@ -24,7 +24,6 @@ const Trade = ({ chartData }) => {
 
   // select security from portfolio
   const selectSecurity = security => {
-    setSelectedRange('1d')
     dispatch(tradeActions.selectSecurity(security))
   }
 
@@ -33,6 +32,10 @@ const Trade = ({ chartData }) => {
   const [currentChartData, setCurrentChartData] = useState(chartData)
 
   // useEffects
+
+  // reset selected range when security changes
+  useEffect(() => setSelectedRange('1d'), [selectedSecurity?.id])
+
   useEffect(() => {
     // if we have data for a selected range, generate new chart data
     if (!!selectedSecurity?.historicQuotes?.[selectedRange]) {
