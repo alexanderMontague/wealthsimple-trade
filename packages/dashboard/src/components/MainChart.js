@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Card, CardHeader, CardBody, Button, CardFooter } from 'shards-react'
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Button,
+  CardFooter,
+  Row,
+  Col,
+} from 'shards-react'
+import { ClipLoader } from 'react-spinners'
 
 const MainChart = ({
   overrideRanges,
@@ -9,6 +18,7 @@ const MainChart = ({
   type = 'LineWithLine',
   chartData,
   chartTitle,
+  loading = false,
 }) => {
   const canvasRef = React.createRef()
 
@@ -71,7 +81,14 @@ const MainChart = ({
   return (
     <Card small className="h-100">
       <CardHeader className="border-bottom">
-        <h6 className="m-0">{chartTitle}</h6>
+        <Row>
+          <Col className="col-10">
+            <h6 className="m-0">{chartTitle}</h6>
+          </Col>
+          <Col className="col-2">
+            <ClipLoader loading={loading} size={20} color="#007bff" />
+          </Col>
+        </Row>
       </CardHeader>
       <CardBody className="pt-0">
         <canvas
