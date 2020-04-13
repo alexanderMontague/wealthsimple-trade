@@ -18,12 +18,14 @@ const DropDownItem = ({
   exchange,
   id,
   currency,
-  selectSecurity,
+  onDropDownSecurityClick,
 }) => {
   return (
     <div
       className="securityDropDownItem"
-      onClick={() => selectSecurity({ id, name, symbol, exchange, currency })}
+      onClick={() =>
+        onDropDownSecurityClick({ id, name, symbol, exchange, currency })
+      }
     >
       <Row>
         <Col className="col-9">{`${name} (${symbol})`}</Col>
@@ -101,7 +103,7 @@ const MainNavbar = ({ layout, stickyTop, history }) => {
         exchange={security.stock.primary_exchange}
         id={security.id}
         currency={security.currency}
-        selectSecurity={onDropDownSecurityClick}
+        onDropDownSecurityClick={onDropDownSecurityClick}
       />
     ))
 
