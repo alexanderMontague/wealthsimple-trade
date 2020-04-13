@@ -104,7 +104,7 @@ export async function getWatchlist(req, res, next) {
 export async function searchSecurity(req, res, next) {
   let securityQueryData = {}
   const tokens: Tokens = req.tokens
-  const query = req.params?.query
+  const query = req.query?.query
 
   if (!query) {
     return res

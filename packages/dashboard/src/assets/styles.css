@@ -6,3 +6,29 @@
 .securitySelected {
   background: #e1e5eb;
 }
+
+.searchIcon:hover {
+  color: #007bff;
+  cursor: pointer;
+}
+
+.securityDropDownContainer {
+  position: absolute;
+  margin-left: 25px;
+  max-height: 500px;
+  overflow-y: scroll;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 0 0 0.625rem 0.625rem;
+}
+
+.securityDropDownItem {
+  font-weight: 500;
+  width: 400px;
+  background: #ffffff;
+  z-index: 100;
+  padding: 10px;
+}
+.securityDropDownItem:hover {
+  cursor: pointer;
+  background: #fbfbfb;
+}
