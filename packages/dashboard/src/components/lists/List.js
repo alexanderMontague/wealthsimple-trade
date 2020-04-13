@@ -19,46 +19,46 @@ import {
   CardBody,
 } from 'shards-react'
 
+const gainStyles = {
+  green: '#17c671',
+  red: '#c4183c',
+}
+
 const List = ({ items, listTitle }) => {
   const renderListItems = () => {
     return items.map(item => (
       <tr key={item.id}>
         <td>
-          {item.stock.symbol} <sub>{item.stock.name}</sub>
+          <div style={{ fontSize: 20 }}>
+            <b>{item.stock.symbol}</b>
+          </div>
+
+          <div className="pb-1" style={{ fontWeight: '300' }}>
+            {item.stock.name}
+          </div>
         </td>
         <td>{'$ ' + item.quote.amount}</td>
-        <td>
-          <div
-            style={{
-              width: '60%',
-              padding: '8px',
-              borderRadius: '6px',
-              background:
-                item.quote.previous_close < item.quote.amount
-                  ? 'lightgreen'
-                  : 'rgba(255,0,0,0.8)',
-            }}
-          >
-            {'$ ' + (item.quote.amount - item.quote.previous_close).toFixed(2)}
-          </div>
+        <td
+          style={{
+            color:
+              item.quote.previous_close > item.quote.amount
+                ? gainStyles.red
+                : gainStyles.green,
+          }}
+        >
+          {(item.quote.amount - item.quote.previous_close).toFixed(2)}
         </td>
-        <td>
-          <div
-            style={{
-              width: '60%',
-              padding: '8px',
-              borderRadius: '6px',
-              background:
-                item.quote.previous_close < item.quote.amount
-                  ? 'lightgreen'
-                  : 'rgba(255,0,0,0.8)',
-            }}
-          >
-            {(
-              (item.quote.amount / item.quote.previous_close - 1) *
-              100
-            ).toFixed(2) + '%'}
-          </div>
+        <td
+          style={{
+            color:
+              item.quote.previous_close > item.quote.amount
+                ? gainStyles.red
+                : gainStyles.green,
+          }}
+        >
+          {((item.quote.amount / item.quote.previous_close - 1) * 100).toFixed(
+            2
+          ) + '%'}
         </td>
         <td>{item.stock.primary_exchange}</td>
       </tr>
@@ -80,7 +80,7 @@ const List = ({ items, listTitle }) => {
                 <thead className="bg-light">
                   <tr>
                     <th scope="col" className="border-0">
-                      Symbol
+                      Security
                     </th>
                     <th scope="col" className="border-0">
                       Price
