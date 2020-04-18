@@ -50,7 +50,7 @@ const MainNavbar = ({ layout, stickyTop, history }) => {
 
   const dispatch = useDispatch()
 
-  const tokens = useSelector(state => state.auth.user.tokens)
+  const tokens = useSelector(state => state.auth?.user?.tokens)
 
   let searchTimer
 

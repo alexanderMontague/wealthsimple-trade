@@ -58,12 +58,14 @@ const Trade = ({ chartData }) => {
 
     setSelectedRange(selectedRange)
 
-    dispatch(
-      tradeActions.getSecurityHistory({
-        securityId: selectedSecurity.id,
-        time: selectedRange,
-      })
-    )
+    if (!selectedSecurity?.historicQuotes?.[selectedRange]) {
+      dispatch(
+        tradeActions.getSecurityHistory({
+          securityId: selectedSecurity.id,
+          time: selectedRange,
+        })
+      )
+    }
   }
 
   const getChartData = () => {

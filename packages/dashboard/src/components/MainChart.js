@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import _ from 'lodash'
 import PropTypes from 'prop-types'
 import {
   Card,
@@ -10,6 +11,7 @@ import {
   Col,
 } from 'shards-react'
 import { ClipLoader } from 'react-spinners'
+import { usePrevious } from '../utils/hooks'
 
 const MainChart = ({
   overrideRanges,
@@ -30,11 +32,14 @@ const MainChart = ({
     setselectedRange('1d')
   }, [chartTitle])
 
+  const currChartData = chartData?.data?.datasets?.[0]?.data
+  const prevChartData = usePrevious(currChartData)
+
   useEffect(() => {
     if (chartData?.data) {
       renderChart()
     }
-  }, [chartData?.data?.datasets?.[0]?.data])
+  }, [!_.isEqual(currChartData, prevChartData)])
 
   const onRangeClick = e => {
     // update internal selected state
