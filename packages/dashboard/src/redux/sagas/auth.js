@@ -1,8 +1,8 @@
 import { put, takeLatest } from 'redux-saga/effects'
 import { LOGIN_USER, LOGOUT_USER, GET_STATUS } from '../constants'
-import { authActions } from '../actions'
+import { authActions, tradeActions } from '../actions'
 import { loginUser, getStatus } from '../../utils/requests'
-import { createResponse } from '../../utils/helpers'
+import { createResponse, getFormattedAccount } from '../../utils/helpers'
 
 // STATUS
 function* getUserStatus({ payload }) {
@@ -21,6 +21,14 @@ function* getUserStatus({ payload }) {
       {},
       true
     )
+  }
+
+  const accounts = statusResponse?.data?.portfolioData
+
+  // if we have accounts, default to the first one as our selected account
+  if (accounts && Object.keys(accounts)) {
+    const firstAccountId = Object.keys(accounts)[0]
+    yield put(tradeActions.selectAccount(getFormattedAccount(firstAccountId)))
   }
 
   return yield put(authActions.statusResponse(statusResponse))

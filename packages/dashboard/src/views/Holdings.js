@@ -47,21 +47,19 @@ const Holdings = ({
     message: '',
   })
 
+  // update UI and internal state to use defaulted selected account
   useEffect(() => {
-    // on load set dropdown and current account state from redux
     if (globalSelectedAccount) {
+      // set account dropdown
       setDropdownState({
         isOpen: false,
         selected: globalSelectedAccount,
       })
-      setSelectedAccount({
-        ...accounts[globalSelectedAccount.value],
-        value: globalSelectedAccount.value,
-      })
-    }
 
-    return () => {}
-  }, [])
+      // set the selected account state locally
+      setSelectedAccount(accounts[globalSelectedAccount.value])
+    }
+  }, [accounts])
 
   useEffect(() => {
     // fetch 1d stats for account overview on account switch
@@ -72,8 +70,6 @@ const Holdings = ({
         tokens: JSON.stringify(user.tokens),
       })
     }
-
-    return () => null
   }, [selectedAccount])
 
   useEffect(() => {
@@ -122,10 +118,8 @@ const Holdings = ({
     })
 
     // set the selected account locally
-    setSelectedAccount({
-      ...accounts[currentAccount.value],
-      value: currentAccount.value,
-    })
+    // TODO GET RID OF INTERNAL STATE< DISPATCH ACTION HERE
+    setSelectedAccount(accounts[currentAccount.value])
 
     // dispatch selected account to redux
     selectAccount(currentAccount)
