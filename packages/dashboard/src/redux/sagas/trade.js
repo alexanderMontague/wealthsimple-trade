@@ -43,6 +43,23 @@ function* getAccountWatchlist({ payload }) {
 
 // everytime we select a security, dispatch a fetch history for initial 1d data
 function* selectSecurity({ payload }) {
+  const tokens = JSON.stringify(yield select(getTokens))
+  let securityData
+
+  // fetch general data about selected security
+  try {
+    securityData = (yield getSecurity({ tokens, securityId: payload.id })).data
+  } catch (error) {
+    console.error(
+      'Error fetching selected security base data.',
+      error.response?.data?.message || error.message
+    ) // todo better error handling
+  }
+
+  // dispatch fetched general data back to reducer
+  yield put(tradeActions.selectedSecurity(securityData))
+
+  // dispatch action to get selected security historic data
   return yield put(
     tradeActions.getSecurityHistory({ securityId: payload.id, time: '1d' })
   )

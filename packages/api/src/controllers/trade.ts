@@ -150,6 +150,7 @@ export async function getSecurity(req, res, next) {
   const securityId = req.params?.security_id
   const time: Time = req.params?.time
   const mic = req.query?.mic
+  const isHistorial = req.url.includes("/historical_quotes")
 
   if (!securityId) {
     return res
@@ -157,21 +158,27 @@ export async function getSecurity(req, res, next) {
       .json(createResponse(422, 'Missing security id', {}, true))
   }
 
-  if (!time) {
+  if (isHistorial && !time) {
     return res
       .status(422)
       .json(createResponse(422, 'Missing time period', {}, true))
   }
 
   try {
-    securityData[time] = (
+    const securityDataResponse =
       await WST_getSecurity({
         tokens,
         securityId,
         time,
         mic,
       })
-    ).results
+
+    if(isHistorial) {
+      securityData[time] = securityDataResponse.results
+    }
+    else {
+      securityData = securityDataResponse
+    }
   } catch (error) {
     return res.status(400).json(createResponse(400, getError(error), {}, true))
   }
