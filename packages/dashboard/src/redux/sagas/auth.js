@@ -28,7 +28,7 @@ function* getUserStatus({ payload }) {
 
   // default to the first account as our selected account if we have accounts
   const accounts = statusResponse?.data?.portfolioData
-  if (accounts && Object.keys(accounts)) {
+  if (accounts && Object.keys(accounts).length) {
     const firstAccountId = Object.keys(accounts)[0]
     yield put(tradeActions.selectAccount(getFormattedAccount(firstAccountId)))
   }
@@ -59,7 +59,7 @@ function* attemptLoginUser({ payload }) {
 
   // default to the first account as our selected account if we have accounts
   const accounts = loginResponse?.data?.portfolioData
-  if (accounts && Object.keys(accounts)) {
+  if (accounts && Object.keys(accounts).length) {
     const firstAccountId = Object.keys(accounts)[0]
     yield put(tradeActions.selectAccount(getFormattedAccount(firstAccountId)))
   }
