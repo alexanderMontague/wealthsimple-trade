@@ -23,15 +23,15 @@ function* getUserStatus({ payload }) {
     )
   }
 
-  const accounts = statusResponse?.data?.portfolioData
+  // dispatch auth response
+  yield put(authActions.statusResponse(statusResponse))
 
-  // if we have accounts, default to the first one as our selected account
+  // default to the first account as our selected account if we have accounts
+  const accounts = statusResponse?.data?.portfolioData
   if (accounts && Object.keys(accounts)) {
     const firstAccountId = Object.keys(accounts)[0]
     yield put(tradeActions.selectAccount(getFormattedAccount(firstAccountId)))
   }
-
-  return yield put(authActions.statusResponse(statusResponse))
 }
 
 // LOGIN
@@ -56,6 +56,13 @@ function* attemptLoginUser({ payload }) {
   // if login is successful, update tokens and dispatch success
   window.localStorage.tokens = JSON.stringify(loginResponse.data.tokens)
   yield put(authActions.loginSuccess(loginResponse))
+
+  // default to the first account as our selected account if we have accounts
+  const accounts = loginResponse?.data?.portfolioData
+  if (accounts && Object.keys(accounts)) {
+    const firstAccountId = Object.keys(accounts)[0]
+    yield put(tradeActions.selectAccount(getFormattedAccount(firstAccountId)))
+  }
 }
 
 // LOGOUT
