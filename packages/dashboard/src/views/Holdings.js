@@ -34,52 +34,44 @@ const Holdings = ({
   getHistory,
   user,
   historicQuotes,
-  globalSelectedAccount,
+  selectedAccountInfo,
   isHistoryLoading,
 }) => {
   const [dropdownState, setDropdownState] = useState({
     isOpen: false,
     selected: null,
   })
-  const [selectedAccount, setSelectedAccount] = useState(null)
   const [alertData, setAlertData] = useState({
     isShowing: false,
     message: '',
   })
 
+  // selected account contains the account ID and display only, not account data
+  const selectedAccount = accounts[selectedAccountInfo?.value]
+
+  // set selected account information and fetch data on load or account change
   useEffect(() => {
-    // on load set dropdown and current account state from redux
-    if (globalSelectedAccount) {
+    if (selectedAccount) {
+      // set account dropdown to correct account
       setDropdownState({
         isOpen: false,
-        selected: globalSelectedAccount,
+        selected: selectedAccountInfo,
       })
-      setSelectedAccount({
-        ...accounts[globalSelectedAccount.value],
-        value: globalSelectedAccount.value,
-      })
-    }
 
-    return () => {}
-  }, [])
-
-  useEffect(() => {
-    // fetch 1d stats for account overview on account switch
-    if (!!selectedAccount) {
+      // fetch initial data used for account overview
       getHistory({
         times: ['1d', 'all'],
-        account: dropdownState.selected.value,
+        account: selectedAccountInfo.value,
         tokens: JSON.stringify(user.tokens),
       })
     }
-
-    return () => null
   }, [selectedAccount])
 
   useEffect(() => {
     if (!isHistoryLoading) {
       // if markets just opened and we don't have data yet
       if (
+        Object.keys(historicQuotes).length &&
         !isHistoryDataValid(['1d', 'all'], historicQuotes) &&
         selectedAccount &&
         !alertData.isShowing
@@ -100,7 +92,6 @@ const Holdings = ({
         })
       }
     }
-    return () => {}
   }, [historicQuotes])
 
   // TODO shards dropdowns are jank... figure out a better way to do this
@@ -119,12 +110,6 @@ const Holdings = ({
     setDropdownState({
       isOpen: false,
       selected: currentAccount,
-    })
-
-    // set the selected account locally
-    setSelectedAccount({
-      ...accounts[currentAccount.value],
-      value: currentAccount.value,
     })
 
     // dispatch selected account to redux
@@ -543,7 +528,7 @@ const mapStateToProps = state => ({
   user: state.auth.user,
   historicQuotes: state.trade.historicQuotes,
   isHistoryLoading: state.trade.isHistoryLoading,
-  globalSelectedAccount: state.trade.selectedAccount,
+  selectedAccountInfo: state.trade.selectedAccount,
 })
 
 const mapDispatchToProps = {

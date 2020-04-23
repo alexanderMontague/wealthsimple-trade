@@ -1,8 +1,8 @@
 import { put, takeLatest } from 'redux-saga/effects'
 import { LOGIN_USER, LOGOUT_USER, GET_STATUS } from '../constants'
-import { authActions } from '../actions'
+import { authActions, tradeActions } from '../actions'
 import { loginUser, getStatus } from '../../utils/requests'
-import { createResponse } from '../../utils/helpers'
+import { createResponse, getFormattedAccount } from '../../utils/helpers'
 
 // STATUS
 function* getUserStatus({ payload }) {
@@ -23,7 +23,15 @@ function* getUserStatus({ payload }) {
     )
   }
 
-  return yield put(authActions.statusResponse(statusResponse))
+  // dispatch auth response
+  yield put(authActions.statusResponse(statusResponse))
+
+  // default to the first account as our selected account if we have accounts
+  const accounts = statusResponse?.data?.portfolioData
+  if (accounts && Object.keys(accounts).length) {
+    const firstAccountId = Object.keys(accounts)[0]
+    yield put(tradeActions.selectAccount(getFormattedAccount(firstAccountId)))
+  }
 }
 
 // LOGIN
@@ -48,6 +56,13 @@ function* attemptLoginUser({ payload }) {
   // if login is successful, update tokens and dispatch success
   window.localStorage.tokens = JSON.stringify(loginResponse.data.tokens)
   yield put(authActions.loginSuccess(loginResponse))
+
+  // default to the first account as our selected account if we have accounts
+  const accounts = loginResponse?.data?.portfolioData
+  if (accounts && Object.keys(accounts).length) {
+    const firstAccountId = Object.keys(accounts)[0]
+    yield put(tradeActions.selectAccount(getFormattedAccount(firstAccountId)))
+  }
 }
 
 // LOGOUT

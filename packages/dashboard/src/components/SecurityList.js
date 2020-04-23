@@ -59,7 +59,7 @@ const Security = ({
                 style={{
                   color: gain.value < 0 ? gainStyles.red : gainStyles.green,
                 }}
-              >{`${Math.round(gain.value * 100) / 100} (${Math.round(
+              >{`$${Math.round(gain.value * 100) / 100} (${Math.round(
                 gain.percent * 100
               ) / 100}%)`}</span>{' '}
               {currency}
