@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Tokens, HistoryParam } from './types'
+import { Tokens, HistoryParam, SecurityOrder } from './types'
 
 // Wealthsimple Trade Requests
 const BASE_URL = 'https://trade-service.wealthsimple.com'
@@ -76,3 +76,7 @@ export const WST_removeFromWatchlist = async (
 ) =>
   (await axios.delete(`${BASE_URL}/watchlist/${security}`, getConfig(tokens)))
     .data
+
+// Buy or Sell security
+export const WST_securityOrder = async (tokens: Tokens, order: SecurityOrder) =>
+  (await axios.post(`${BASE_URL}/orders`, order, getConfig(tokens))).data

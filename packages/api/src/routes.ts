@@ -16,5 +16,6 @@ router.route('/securities/:security_id').get(trade.getSecurity)
 router
   .route('/securities/:security_id/historical_quotes/:time')
   .get(trade.getSecurity)
+router.route('/orders').post(trade.buySellSecurity)
 
 module.exports = router

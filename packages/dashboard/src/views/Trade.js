@@ -10,7 +10,7 @@ import MainChart from '../components/MainChart'
 import SecurityList from '../components/SecurityList'
 
 import PageTitle from './../components/common/PageTitle'
-import NewDraft from './../components/blog/NewDraft'
+import BuySell from './../components/BuySell'
 import Discussions from './../components/blog/Discussions'
 
 const Trade = ({ chartData }) => {
@@ -123,7 +123,7 @@ const Trade = ({ chartData }) => {
             />
           </Col>
           <Col className="mb-4 p-0">
-            <NewDraft />
+            <BuySell selectedSecurity={selectedSecurity} />
           </Col>
         </Col>
 

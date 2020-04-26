@@ -1,5 +1,5 @@
 import { createResponse, getError } from '../helpers'
-import { Tokens, Time } from '../helpers/types'
+import { Tokens, Time, SecurityOrder } from '../helpers/types'
 
 import {
   WST_getHistory,
@@ -8,6 +8,7 @@ import {
   WST_getSecurity,
   WST_addToWatchlist,
   WST_removeFromWatchlist,
+  WST_securityOrder,
 } from '../helpers/requests'
 
 /*
@@ -235,4 +236,70 @@ export async function editWatchlist(req, res) {
   }
 
   res.json(createResponse(200, `Updated watchlist`, watchlist, false))
+}
+
+/*
+ *   POST /api/v1/orders
+ *
+ *   BODY: <SecurityOrder>
+ *
+ *   RES: {
+ *     response: {
+ *       code: Integer,
+ *       message: String,
+ *       data: Object || Array || null,
+ *       error: Boolean
+ *     }
+ *   }
+ */
+export async function buySellSecurity(req, res) {
+  let orderResponse = {}
+  const tokens: Tokens = req.tokens
+  const order: SecurityOrder = req.body
+
+  if (!order) {
+    return res
+      .status(422)
+      .json(createResponse(422, 'Missing order body', {}, true))
+  }
+
+  if (!order.account_id) {
+    return res
+      .status(422)
+      .json(createResponse(422, 'Missing account id', {}, true))
+  }
+
+  if (!order.security_id) {
+    return res
+      .status(422)
+      .json(createResponse(422, 'Missing security id', {}, true))
+  }
+
+  if (!order.order_type) {
+    return res
+      .status(422)
+      .json(createResponse(422, 'Missing order type', {}, true))
+  }
+
+  if (!order.quantity) {
+    return res
+      .status(422)
+      .json(createResponse(422, 'Missing order quantity', {}, true))
+  }
+
+  if (order.order_type === 'buy_quantity' || order.order_type === 'sell_quantity') {
+    try {
+      orderResponse = await WST_securityOrder(tokens, order)
+    } catch (error) {
+      return res
+        .status(400)
+        .json(createResponse(400, getError(error), {}, true))
+    }
+  } else {
+    return res
+      .status(400)
+      .json(createResponse(405, 'Invalid order type', {}, true))
+  }
+
+  res.json(createResponse(200, `Order Successful`, orderResponse, false))
 }

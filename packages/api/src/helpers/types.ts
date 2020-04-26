@@ -17,3 +17,13 @@ export interface HistoryParam {
   account: String
   tokens: Tokens
 }
+
+export interface SecurityOrder {
+  account_id: String
+  quantity: Number
+  security_id: String
+  order_type: 'buy_quantity' | 'sell_quantity'
+  order_sub_type: 'market'
+  time_in_force: 'day'
+  limit_price?: Number
+}
