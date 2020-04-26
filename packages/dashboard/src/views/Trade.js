@@ -46,7 +46,7 @@ const Trade = ({ chartData }) => {
     }
   }, [selectedSecurity?.historicQuotes?.[selectedRange]])
 
-  // current selected accound
+  // current selected account
   const currentAccount = selectedAccount
     ? accounts[selectedAccount.value]
     : null

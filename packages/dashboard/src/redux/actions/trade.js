@@ -5,7 +5,7 @@ import {
   GET_WATCHLIST,
   GET_WATCHLIST_RESPONSE,
   SELECT_SECURITY,
-  SELECT_SECURITY_RESPONSE,
+  SELECTED_SECURITY,
   GET_SECURITY_HISTORY,
   GET_SECURITY_HISTORY_RESPONSE,
 } from '../constants'
@@ -39,6 +39,11 @@ export const getWatchlistResponse = data => ({
 
 export const selectSecurity = data => ({
   type: SELECT_SECURITY,
+  payload: data,
+})
+
+export const selectedSecurity = data => ({
+  type: SELECTED_SECURITY,
   payload: data,
 })
 

@@ -119,10 +119,12 @@ export const searchSecurity = async ({ tokens, query }) =>
  *     error: Boolean
  *   }
  */
-export const getSecurity = async ({ tokens, securityId, time, mic = 'XNAS' }) =>
+export const getSecurity = async ({ tokens, securityId, time, mic }) =>
   (
     await axios.get(
-      `${BASE_URL}/securities/${securityId}/historical_quotes/${time}?mic=${mic}`,
+      `${BASE_URL}/securities/${securityId}${
+        time ? `/historical_quotes/${time}` : ''
+      }${time ? `?mic=${mic || 'XNAS'}` : ''}`,
       getHeaders({ tokens })
     )
   ).data

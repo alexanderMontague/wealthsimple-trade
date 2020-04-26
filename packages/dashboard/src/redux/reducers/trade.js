@@ -8,6 +8,7 @@ import {
   GET_WATCHLIST,
   GET_WATCHLIST_RESPONSE,
   SELECT_SECURITY,
+  SELECTED_SECURITY,
   GET_SECURITY_HISTORY,
   GET_SECURITY_HISTORY_RESPONSE,
 } from '../constants'
@@ -101,6 +102,16 @@ const tradeState = (prevState = initialState, { type, payload }) => {
         selectedSecurity: {
           ...payload,
           historicQuotes: {},
+        },
+      }
+    }
+
+    case SELECTED_SECURITY: {
+      return {
+        ...prevState,
+        selectedSecurity: {
+          ...prevState.selectedSecurity,
+          ...payload,
         },
       }
     }

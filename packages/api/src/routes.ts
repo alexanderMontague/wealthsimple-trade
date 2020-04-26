@@ -10,6 +10,7 @@ router.route('/login').post(auth.login)
 router.route('/history/:times').get(trade.getHistory)
 router.route('/watchlist').get(trade.getWatchlist)
 router.route('/securities').get(trade.searchSecurity)
+router.route('/securities/:security_id').get(trade.getSecurity)
 router
   .route('/securities/:security_id/historical_quotes/:time')
   .get(trade.getSecurity)

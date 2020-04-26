@@ -7,9 +7,6 @@ import {
   ListGroup,
   ListGroupItem,
   CardFooter,
-  Row,
-  Col,
-  FormSelect,
 } from 'shards-react'
 import '../../src/assets/styles.css'
 
@@ -28,6 +25,7 @@ const Security = ({
   id,
   selectSecurity,
   selectedSecurity,
+  notOwned = false,
 }) => {
   return (
     <>
@@ -40,28 +38,33 @@ const Security = ({
         }}
         onClick={() => selectSecurity({ id, symbol, name, exchange, currency })}
       >
-        <div>
-          <div style={{ fontSize: 20 }}>
-            <b>{symbol}</b>
-          </div>
-        </div>
         <div className="d-flex">
           <div className="w-100">
+            <div className="pb-1" style={{ fontSize: 20 }}>
+              <b>{symbol}</b>
+            </div>
             <div className="pb-1">{name}</div>
             <div className="pb-1">
               <i>{exchange}</i>
             </div>
           </div>
           <div className="d-flex flex-column justify-content-center w-100">
+            <div className="pb-1" style={{ height: 34 }}>
+              {notOwned && (
+                <i style={{ fontSize: 10, lineHeight: '25px' }}>
+                  Security not owned
+                </i>
+              )}
+            </div>
             <div className="pb-1">${Math.round(price * 100) / 100}</div>
             <div className="pb-1">
               <span
                 style={{
                   color: gain.value < 0 ? gainStyles.red : gainStyles.green,
                 }}
-              >{`$${Math.round(gain.value * 100) / 100} (${Math.round(
+              >{`$${Math.round(gain.value * 100) / 100} (${(
                 gain.percent * 100
-              ) / 100}%)`}</span>{' '}
+              ).toFixed(2)}%)`}</span>{' '}
               {currency}
             </div>
           </div>
@@ -88,23 +91,58 @@ const SecurityList = ({
         </div>
       )
 
-    return currentAccount.positions.map(security => (
-      <Security
-        id={security.id}
-        selectSecurity={selectSecurity}
-        key={security.id}
-        symbol={security.stock.symbol}
-        name={security.stock.name}
-        exchange={security.stock.primary_exchange}
-        price={security.quote.amount}
-        gain={{
-          value: security.quote.amount - security.quote.previous_close,
-          percent: security.quote.amount / security.quote.previous_close - 1,
-        }}
-        currency={security.currency}
-        selectedSecurity={selectedSecurity}
-      />
-    ))
+    const securitiesNotInPortfolio = []
+    if (
+      selectedSecurity?.quote &&
+      !currentAccount.positions.some(
+        security => security.id === selectedSecurity.id
+      )
+    ) {
+      securitiesNotInPortfolio[0] = (
+        <Security
+          id={selectedSecurity.id}
+          selectSecurity={() => {}}
+          key={selectedSecurity.id}
+          symbol={selectedSecurity.symbol}
+          name={selectedSecurity.name}
+          exchange={selectedSecurity.exchange}
+          price={selectedSecurity.quote.amount}
+          gain={{
+            value:
+              selectedSecurity.quote.amount -
+              selectedSecurity.quote.previous_close,
+            percent:
+              selectedSecurity.quote.amount /
+                selectedSecurity.quote.previous_close -
+              1,
+          }}
+          currency={selectedSecurity.currency}
+          selectedSecurity={selectedSecurity}
+          notOwned
+        />
+      )
+    }
+
+    return [
+      ...securitiesNotInPortfolio,
+      ...currentAccount.positions.map(security => (
+        <Security
+          id={security.id}
+          selectSecurity={selectSecurity}
+          key={security.id}
+          symbol={security.stock.symbol}
+          name={security.stock.name}
+          exchange={security.stock.primary_exchange}
+          price={security.quote.amount}
+          gain={{
+            value: security.quote.amount - security.quote.previous_close,
+            percent: security.quote.amount / security.quote.previous_close - 1,
+          }}
+          currency={security.currency}
+          selectedSecurity={selectedSecurity}
+        />
+      )),
+    ]
   }
 
   return (
