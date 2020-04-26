@@ -6,6 +6,8 @@ import {
   WST_getWatchlist,
   WST_searchSecurity,
   WST_getSecurity,
+  WST_addToWatchlist,
+  WST_removeFromWatchlist,
 } from '../helpers/requests'
 
 /*
@@ -23,7 +25,7 @@ import {
  *     }
  *   }
  */
-export async function getHistory(req, res, next) {
+export async function getHistory(req, res) {
   let historyResponse = {}
   const tokens: Tokens = req.tokens
   const times = req.params?.times?.split(',')
@@ -73,7 +75,7 @@ export async function getHistory(req, res, next) {
  *     }
  *   }
  */
-export async function getWatchlist(req, res, next) {
+export async function getWatchlist(req, res) {
   let watchlist = {}
   const tokens: Tokens = req.tokens
   const limit = req.params?.limit
@@ -101,7 +103,7 @@ export async function getWatchlist(req, res, next) {
  *     }
  *   }
  */
-export async function searchSecurity(req, res, next) {
+export async function searchSecurity(req, res) {
   let securityQueryData = {}
   const tokens: Tokens = req.tokens
   const query = req.query?.query
@@ -144,13 +146,13 @@ export async function searchSecurity(req, res, next) {
  *     }
  *   }
  */
-export async function getSecurity(req, res, next) {
+export async function getSecurity(req, res) {
   let securityData = {}
   const tokens: Tokens = req.tokens
   const securityId = req.params?.security_id
   const time: Time = req.params?.time
   const mic = req.query?.mic
-  const isHistorial = req.url.includes("/historical_quotes")
+  const isHistorial = req.url.includes('/historical_quotes')
 
   if (!securityId) {
     return res
@@ -165,18 +167,16 @@ export async function getSecurity(req, res, next) {
   }
 
   try {
-    const securityDataResponse =
-      await WST_getSecurity({
-        tokens,
-        securityId,
-        time,
-        mic,
-      })
+    const securityDataResponse = await WST_getSecurity({
+      tokens,
+      securityId,
+      time,
+      mic,
+    })
 
-    if(isHistorial) {
+    if (isHistorial) {
       securityData[time] = securityDataResponse.results
-    }
-    else {
+    } else {
       securityData = securityDataResponse
     }
   } catch (error) {
@@ -191,4 +191,48 @@ export async function getSecurity(req, res, next) {
       false
     )
   )
+}
+
+/*
+ *   PUT / DELETE /api/v1/watchlist/<SECURITY_ID>
+ *
+ *   SECURITY_ID: Security ID
+ *
+ *   RES: {
+ *     response: {
+ *       code: Integer,
+ *       message: String,
+ *       data: Object || Array || null,
+ *       error: Boolean
+ *     }
+ *   }
+ */
+export async function editWatchlist(req, res) {
+  let watchlist = {}
+  const tokens: Tokens = req.tokens
+  const securityId = req.params?.security_id
+
+  if (!securityId) {
+    return res
+      .status(422)
+      .json(createResponse(422, 'Missing security id', {}, true))
+  }
+
+  if (req.method === 'PUT') {
+    try {
+      watchlist = await WST_addToWatchlist(tokens, securityId)
+    } catch (error) {
+      return res
+        .status(400)
+        .json(createResponse(400, getError(error), {}, true))
+    }
+  } else if (req.method === 'DELETE') {
+    watchlist = await WST_removeFromWatchlist(tokens, securityId)
+  } else {
+    return res
+      .status(405)
+      .json(createResponse(405, 'Invalid watchlist Method', {}, true))
+  }
+
+  res.json(createResponse(200, `Updated watchlist`, watchlist, false))
 }
