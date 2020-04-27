@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
-import { Container, Row, Col } from 'shards-react'
+import {
+  Container,
+  Row,
+  Col,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  Button,
+} from 'shards-react'
 import moment from 'moment'
 
 import { tradeActions } from '../redux/actions'
@@ -33,6 +41,7 @@ const Trade = ({ chartData }) => {
   // internal state
   const [selectedRange, setSelectedRange] = useState('1d')
   const [currentChartData, setCurrentChartData] = useState(chartData)
+  const [openModal, setOpenModal] = useState(null)
 
   // useEffects
 
@@ -97,6 +106,10 @@ const Trade = ({ chartData }) => {
     setCurrentChartData(defaultChartData)
   }
 
+  const toggleModal = (action = null) => setOpenModal(action)
+
+  const isBuy = openModal === 'buy'
+
   return (
     <Container fluid className="main-content-container px-4">
       {/* Page Header */}
@@ -123,7 +136,10 @@ const Trade = ({ chartData }) => {
             />
           </Col>
           <Col className="mb-4 p-0">
-            <BuySell selectedSecurity={selectedSecurity} />
+            <BuySell
+              selectedSecurity={selectedSecurity}
+              toggleModal={toggleModal}
+            />
           </Col>
         </Col>
 
@@ -141,6 +157,32 @@ const Trade = ({ chartData }) => {
           </Col>
         </Col>
       </Row>
+      <Modal
+        open={!!openModal}
+        toggle={toggleModal}
+        style={{ marginTop: '30%' }}
+      >
+        <ModalHeader>
+          Confirm {isBuy ? 'Market Buy' : 'Market Sell'}
+        </ModalHeader>
+        <ModalBody>
+          <Row className="pb-3">How many shares...</Row>
+          <Row className="pb-3">Price Breakdown</Row>
+          <Row className="pb-3">Disclaimer</Row>
+          <Row className="d-flex justify-content-around py-1">
+            <Col className="mx-4">
+              <Button theme="primary" block onClick={() => {}}>
+                Confirm Order
+              </Button>
+            </Col>
+            <Col className="mx-4">
+              <Button theme="secondary" block onClick={() => toggleModal(null)}>
+                Cancel Order
+              </Button>
+            </Col>
+          </Row>
+        </ModalBody>
+      </Modal>
     </Container>
   )
 }

@@ -107,11 +107,17 @@ const tradeState = (prevState = initialState, { type, payload }) => {
     }
 
     case SELECTED_SECURITY: {
+      const currentAccount =
+        prevState.accounts?.[prevState.selectedAccount?.value]
+
+      const isOwned = !!currentAccount.position_quantities[payload.id]
+
       return {
         ...prevState,
         selectedSecurity: {
           ...prevState.selectedSecurity,
           ...payload,
+          isOwned,
         },
       }
     }

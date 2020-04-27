@@ -19,7 +19,13 @@ const MainSidebar = props => {
   )
 
   return (
-    <Col tag="aside" className={classes} lg={{ size: 2 }} md={{ size: 3 }}>
+    <Col
+      style={{ zIndex: 10 }}
+      tag="aside"
+      className={classes}
+      lg={{ size: 2 }}
+      md={{ size: 3 }}
+    >
       <SidebarMainNavbar hideLogoText={props.hideLogoText} />
       <SidebarSearch />
       <SidebarNavItems />
