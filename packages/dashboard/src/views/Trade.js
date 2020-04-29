@@ -9,6 +9,7 @@ import {
   ModalHeader,
   ModalBody,
   Button,
+  FormInput,
 } from 'shards-react'
 import moment from 'moment'
 
@@ -42,6 +43,7 @@ const Trade = ({ chartData }) => {
   const [selectedRange, setSelectedRange] = useState('1d')
   const [currentChartData, setCurrentChartData] = useState(chartData)
   const [openModal, setOpenModal] = useState(null)
+  const [orderAmount, setOrderAmount] = useState(0)
 
   // useEffects
 
@@ -106,6 +108,13 @@ const Trade = ({ chartData }) => {
     setCurrentChartData(defaultChartData)
   }
 
+  const validateOrder = e => {
+    const value = e.target.value
+    if (!value.match(/^[0-9]*$/)) return
+
+    setOrderAmount(value)
+  }
+
   const toggleModal = (action = null) => setOpenModal(action)
 
   const isBuy = openModal === 'buy'
@@ -166,8 +175,36 @@ const Trade = ({ chartData }) => {
           Confirm {isBuy ? 'Market Buy' : 'Market Sell'}
         </ModalHeader>
         <ModalBody>
-          <Row className="pb-3">How many shares...</Row>
-          <Row className="pb-3">Price Breakdown</Row>
+          <Row className="pb-3 d-flex flex-column align-content-center">
+            <div>
+              How many shares of{' '}
+              <b>
+                <u>{selectedSecurity?.symbol}</u>
+              </b>{' '}
+              do you want to buy?
+            </div>
+            <div className="pt-3">
+              <FormInput
+                value={orderAmount}
+                onChange={validateOrder}
+                style={{ textAlign: 'center' }}
+              />
+            </div>
+          </Row>
+          <Row className="pb-3 d-flex flex-column justify-content-around">
+            <Row>
+              <Col>price</Col>
+              <Col>---</Col>
+            </Row>
+            <Row>
+              <Col>estimated cost</Col>
+              <Col>---</Col>
+            </Row>
+            <Row>
+              <Col>available to trade</Col>
+              <Col>---</Col>
+            </Row>
+          </Row>
           <Row className="pb-3">Disclaimer</Row>
           <Row className="d-flex justify-content-around py-1">
             <Col className="mx-4">
