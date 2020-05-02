@@ -10,6 +10,10 @@ import {
   ModalBody,
   Button,
   FormInput,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
 } from 'shards-react'
 import moment from 'moment'
 
@@ -175,21 +179,37 @@ const Trade = ({ chartData }) => {
           Confirm {isBuy ? 'Market Buy' : 'Market Sell'}
         </ModalHeader>
         <ModalBody>
-          <Row className="pb-3 d-flex flex-column align-content-center">
-            <div>
-              How many shares of{' '}
-              <b>
-                <u>{selectedSecurity?.symbol}</u>
-              </b>{' '}
-              do you want to buy?
-            </div>
-            <div className="pt-3">
-              <FormInput
-                value={orderAmount}
-                onChange={validateOrder}
-                style={{ textAlign: 'center' }}
-              />
-            </div>
+          <Row>
+            <Col>
+              <Dropdown id="toggle" open={true} toggle={() => {}}>
+                <DropdownToggle
+                  caret
+                  style={{ width: '160px', fontSize: '15px' }}
+                >
+                  Select Buy
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem>Test1</DropdownItem>
+                  <DropdownItem>Test2</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </Col>
+            <Col className="pb-3 d-flex flex-column align-content-center">
+              <div>
+                How many shares of{' '}
+                <b>
+                  <u>{selectedSecurity?.symbol}</u>
+                </b>{' '}
+                do you want to buy?
+              </div>
+              <div className="pt-3">
+                <FormInput
+                  value={orderAmount}
+                  onChange={validateOrder}
+                  style={{ textAlign: 'center' }}
+                />
+              </div>
+            </Col>
           </Row>
           <Row className="pb-3 d-flex flex-column justify-content-around">
             <Row>
