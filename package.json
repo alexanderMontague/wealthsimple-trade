@@ -9,7 +9,7 @@
     "prettier": "prettier --write \"**/*.{ts,js,json}\""
   },
   "devDependencies": {
-    "lerna": "^3.20.2",
+    "lerna": "^7.1.1",
     "prettier": "^1.19.1",
     "chalk": "^2.4.1"
   },
